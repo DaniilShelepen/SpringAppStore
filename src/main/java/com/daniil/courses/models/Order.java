@@ -1,8 +1,8 @@
 package com.daniil.courses.models;
 
 import com.daniil.courses.role_models.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -11,6 +11,10 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@ToString
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +22,8 @@ public class Order {
     protected String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date date;
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     protected Address address;
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     protected User user;
 }

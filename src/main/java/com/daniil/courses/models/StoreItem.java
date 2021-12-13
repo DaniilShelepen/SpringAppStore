@@ -4,27 +4,22 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.List;
-
+import java.math.BigDecimal;
 
 @Getter
 @Setter
-@SuperBuilder
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 @Entity
-public class Address {
-
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@ToString
+public class StoreItem {
+    protected BigDecimal price;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    protected String city;
-    protected String street;
-    protected String base;
-    protected String flat;
-    protected String floor;
-    protected String entrance;
-
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    private AppStore appStore;
+    @ManyToOne
+    private Item item;
 }
