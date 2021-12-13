@@ -30,7 +30,5 @@ public class Item {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date releaseDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    AppStore appStore;
 
 }

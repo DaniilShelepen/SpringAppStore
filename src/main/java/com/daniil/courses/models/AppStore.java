@@ -18,7 +18,7 @@ import java.util.List;
 public class AppStore {
     private final String shopName = "AppStore";
     @OneToMany(mappedBy = "appStore", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    List<Item> items;
+    List<StoreItem> items;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

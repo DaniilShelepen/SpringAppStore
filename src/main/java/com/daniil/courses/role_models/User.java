@@ -1,5 +1,6 @@
 package com.daniil.courses.role_models;
 
+import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Order;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Entity
+@Entity(name = "store_user")
 @Getter
 @Setter
 public class User {
@@ -24,4 +25,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Order> orders;
 
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    List<Address> addresses;
 }

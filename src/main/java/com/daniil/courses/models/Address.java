@@ -1,5 +1,6 @@
 package com.daniil.courses.models;
 
+import com.daniil.courses.role_models.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -26,5 +27,7 @@ public class Address {
     protected String floor;
     protected String entrance;
 
+    @ManyToOne
+    protected User user;
 
 }
