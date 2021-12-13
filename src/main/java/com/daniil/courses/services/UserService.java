@@ -3,6 +3,7 @@ package com.daniil.courses.services;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.role_models.User;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface UserService {
 
     List<Address> removeAddress(Integer id);
 
-    List<Address> addAddress();
+    void addAddress(User user,Address address);
 
     List<Address> refactorAddress(Integer id);
 

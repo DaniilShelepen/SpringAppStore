@@ -2,8 +2,8 @@ package com.daniil.courses.role_models;
 
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Order;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +12,9 @@ import java.util.List;
 @Entity(name = "store_user")
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     protected String userName;
     protected String password;
