@@ -3,6 +3,7 @@ package com.daniil.courses.services;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.repositories.AddressRepository;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,30 +21,43 @@ public class UserServiceIml implements UserService {
 
 
     UserRepository userRepository;
+    AddressRepository addressRepository;
 
     @Autowired
-    public UserServiceIml(UserRepository userRepository) {
+    public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     @Override
     public List<Address> getAllAddresses() {
-        return null;
+        return addressRepository.findAll();
     }
 
     @Override
-    public List<Address> removeAddress(Integer id) {
-        return null;
+    public void removeAddress(Integer id) {
+        addressRepository.deleteById(id);
     }
 
     @Override
     public void addAddress(User user, Address address) {
         user.setAddresses(List.of(address));
+        addressRepository.save(address);
     }
 
     @Override
-    public List<Address> refactorAddress(Integer id) {
-        return null;
+    public Address refactorAddress(Address address) {
+
+        Address add = addressRepository.findById(address.getId()).orElseThrow(RuntimeException::new);//TODO свою тут выкинь
+
+        add.setCity(address.getCity());
+        add.setStreet(address.getStreet());
+        add.setBase(address.getBase());
+        add.setFlat(address.getFlat());
+        add.setFloor(address.getFloor());
+        add.setEntrance(address.getEntrance());
+
+        return addressRepository.save(add);
     }
 
     @Override

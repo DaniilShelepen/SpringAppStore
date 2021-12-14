@@ -19,7 +19,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private   Integer id;
     protected String city;
     protected String street;
     protected String base;

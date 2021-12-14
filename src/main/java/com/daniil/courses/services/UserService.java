@@ -11,11 +11,11 @@ public interface UserService {
 
     List<Address> getAllAddresses();
 
-    List<Address> removeAddress(Integer id);
+    void removeAddress(Integer id);
 
-    void addAddress(User user,Address address);
+    void addAddress(User user, Address address);
 
-    List<Address> refactorAddress(Integer id);
+     Address refactorAddress (Address address);
 
     List<Item> getBasket();
 

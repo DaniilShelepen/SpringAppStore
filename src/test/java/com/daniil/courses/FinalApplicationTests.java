@@ -72,7 +72,8 @@ class FinalApplicationTests {
 
     @Test
     void contextLoads() {
-
+//айтемы юсер адрес
+        {
         Iterable<Item> itemsStore = itemRepository.saveAll(
                 List.of(
                         item1,
@@ -94,6 +95,17 @@ class FinalApplicationTests {
 
         userRepository.save(ME);
 
+        userService.addAddress(ME, newAddress);
+    }
+
+        newAddress.setFloor("99");
+        newAddress.setCity("PiPiPi");
+
+
+        userService.refactorAddress(newAddress);
+
+
+       // userService.removeAddress(1);
 
     }
 
@@ -101,9 +113,6 @@ class FinalApplicationTests {
     void addAddress() {
 
 
-        userService.addAddress(ME, newAddress);
-
-        addressRepository.save(newAddress);
     }
 
 }
