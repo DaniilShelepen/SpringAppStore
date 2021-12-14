@@ -31,8 +31,11 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
+    public List<Address> getAllUserAddresses(User user) {
+        return addressRepository.findAll().stream()
+                .filter(address1 -> address1.getUser().getId()
+                        .equals(user.getId()))
+                .collect(Collectors.toList());
     }
 
     @Override

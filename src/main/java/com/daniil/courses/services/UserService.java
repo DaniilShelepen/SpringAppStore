@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    List<Address> getAllAddresses();
+    List<Address> getAllUserAddresses(User user);
 
     void removeAddress(Integer id);
 
