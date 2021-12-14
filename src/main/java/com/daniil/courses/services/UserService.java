@@ -13,7 +13,7 @@ public interface UserService {
 
     void removeAddress(Integer id);
 
-    void addAddress(User user, Address address);
+    List<Address> addAddress(User user, Address address);
 
      Address refactorAddress (Address address);
 
