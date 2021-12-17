@@ -13,8 +13,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
+@Data
 public class StoreItem {
     protected BigDecimal price;
+    protected boolean available;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

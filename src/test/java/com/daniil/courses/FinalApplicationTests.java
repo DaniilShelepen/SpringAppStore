@@ -45,18 +45,24 @@ class FinalApplicationTests {
 
 
     private static final Item item1 = new Item(null, "MacOs", "good very mathafaka",
-            "PC", "SSD 1024", "A93", true, new Date(1_565_568_000_000L));
+            "PC", "SSD 1024", "A93", new Date(1_565_568_000_000L));
 
     private static final Item item2 = new Item(null, "Iphone 11", "mb moy",
-            "phone", "256GB", "A13", true, new Date(1_565_168_000_000L));
+            "phone", "256GB", "A13", new Date(1_565_168_000_000L));
     private static final Item item3 = new Item(null, "AirPods", "birushi",
-            "headPhones", "nun", "A3", true, new Date(1_563_568_000_000L));
+            "headPhones", "nun", "A3", new Date(1_563_568_000_000L));
 
 
     private static final User ME = User.builder()
             .userName("Daniil")
             .password("123")
             .phoneNumber("+37529234567")
+            .build();
+
+    private static final User NOT_ME = User.builder()
+            .userName("Daniil12")
+            .password("12345")
+            .phoneNumber("+3752555567")
             .build();
 
     Address newAddress = Address.builder()
@@ -69,43 +75,50 @@ class FinalApplicationTests {
             .user(ME)
             .build();
 
+    Address not_newAddress = Address.builder()
+            .base("da11da")
+            .city("N11P")
+            .entrance("c111hto")
+            .flat("111115")
+            .floor("41111")
+            .street("lox1111ovskay")
+            .user(NOT_ME)
+            .build();
+
 
     @Test
     void contextLoads() {
 //айтемы юсер адрес
         {
-        Iterable<Item> itemsStore = itemRepository.saveAll(
-                List.of(
-                        item1,
-                        item2,
-                        item3
-                )
-        );
+            Iterable<Item> itemsStore = itemRepository.saveAll(
+                    List.of(
+                            item1,
+                            item2,
+                            item3
+                    )
+            );
 
-        List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
-                .map(item -> StoreItem.builder()
-                        .appStore(appStore)
-                        .item(Item.builder().id(item.getId()).build())
-                        .price(BigDecimal.valueOf(Math.random() * 1500 + 500))
-                        .build())
-                .collect(Collectors.toList());
-        appStore.setItems(storeItems);
+            List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
+                    .map(item -> StoreItem.builder()
+                            .appStore(appStore)
+                            .item(Item.builder().id(item.getId()).build())
+                            .price(BigDecimal.valueOf(Math.random() * 1500 + 500))
+                            .build())
+                    .collect(Collectors.toList());
+            appStore.setItems(storeItems);
 
-        appStoreRepository.save(appStore);
+            appStoreRepository.save(appStore);
 
-        userRepository.save(ME);
+            userRepository.save(ME);
 
-        userService.addAddress(ME, newAddress);
-    }
+            userRepository.save(NOT_ME);
 
-        newAddress.setFloor("99");
-        newAddress.setCity("PiPiPi");
+            userService.addAddress(ME, newAddress);
+            userService.addAddress(NOT_ME, not_newAddress);
+        }
 
-
-        userService.refactorAddress(newAddress);
-
-
-       // userService.removeAddress(1);
+        log.info("{}", userService.getAllUserAddresses(ME.getId()));
+        // userService.removeAddress(1);
 
     }
 

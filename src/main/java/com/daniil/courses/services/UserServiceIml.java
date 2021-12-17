@@ -3,7 +3,9 @@ package com.daniil.courses.services;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.AddressRepository;
+import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,19 +24,23 @@ public class UserServiceIml implements UserService {
 
     UserRepository userRepository;
     AddressRepository addressRepository;
+    StoreItemRepository storeItemRepository;
 
     @Autowired
-    public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository, StoreItemRepository storeItemRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.storeItemRepository = storeItemRepository;
     }
 
     @Override
-    public List<Address> getAllUserAddresses(User user) {
-        return addressRepository.findAll().stream()
-                .filter(address1 -> address1.getUser().getId()
-                        .equals(user.getId()))
-                .collect(Collectors.toList());
+    public List<Address> getAllUserAddresses(Integer userId) {
+        return addressRepository.getAddressByUserId(userId);
+
+//        return addressRepository.findAll().stream()
+//                .filter(address1 -> address1.getUser().getId()
+//                        .equals(user.getId()))
+//                .collect(Collectors.toList());
     }
 
     @Override
@@ -89,8 +94,9 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public List<Item> viewAllItems() {
-        return null;
+    public List<StoreItem> viewAllItems() {
+        return storeItemRepository.findAll().stream()
+                .filter(StoreItem::isAvailable).collect(Collectors.toList());
     }
 
     @Override

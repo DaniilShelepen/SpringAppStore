@@ -3,13 +3,14 @@ package com.daniil.courses.services;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.role_models.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<Address> getAllUserAddresses(User user);
+    List<Address> getAllUserAddresses(Integer userId);
 
     void removeAddress(Integer id);
 
@@ -25,7 +26,7 @@ public interface UserService {
 
     void clearBasket();
 
-    List<Item> viewAllItems();
+    List<StoreItem> viewAllItems();
 
     void buyItems(Integer... id);
 
