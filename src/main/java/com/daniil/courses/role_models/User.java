@@ -1,6 +1,7 @@
 package com.daniil.courses.role_models;
 
 import com.daniil.courses.models.Address;
+import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.Order;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -30,4 +31,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Address> addresses;
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    Basket basket;
 }

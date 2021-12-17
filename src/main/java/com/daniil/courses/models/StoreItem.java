@@ -24,4 +24,6 @@ public class StoreItem {
     private AppStore appStore;
     @ManyToOne
     private Item item;
+    @ManyToOne
+    Basket basket;
 }
