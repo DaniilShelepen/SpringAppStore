@@ -18,13 +18,13 @@ public interface UserService {
 
      Address refactorAddress (Address address);
 
-    List<Item> getBasket();
+    List<StoreItem> getUserBasket(User user);
 
-    void addItemToBasket(Integer count);
+    void addItemToBasket(StoreItem storeItem, User user, Integer count);
 
-    void removeFromBasket(Integer id);
+    void removeFromBasket(User user, StoreItem storeItem);
 
-    void clearBasket();
+    void clearBasket(User user);
 
     List<StoreItem> viewAllItems();
 

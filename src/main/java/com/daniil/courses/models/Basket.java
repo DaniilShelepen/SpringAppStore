@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Basket {
 
     @Id
@@ -24,9 +25,17 @@ public class Basket {
     private Integer id;
     @OneToOne
     User user;
-    @OneToMany(mappedBy = "basket", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    List<StoreItem> storeItem;
+//    @OneToMany//(mappedBy = "basket", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+//    List<StoreItem> storeItem;
+
+    //@ManyToOne
+    @ManyToOne
+    @JoinColumn(name = "store_item_id")
+    StoreItem storeItem;
 
     protected long count;
 
+
+
 }
+

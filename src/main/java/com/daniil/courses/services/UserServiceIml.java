@@ -1,10 +1,8 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Item;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.models.*;
 import com.daniil.courses.repositories.AddressRepository;
+import com.daniil.courses.repositories.BasketRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
@@ -25,22 +23,20 @@ public class UserServiceIml implements UserService {
     UserRepository userRepository;
     AddressRepository addressRepository;
     StoreItemRepository storeItemRepository;
+    BasketRepository basketRepository;
 
     @Autowired
-    public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository, StoreItemRepository storeItemRepository) {
+    public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository,
+                          StoreItemRepository storeItemRepository, BasketRepository basketRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.storeItemRepository = storeItemRepository;
+        this.basketRepository = basketRepository;
     }
 
     @Override
     public List<Address> getAllUserAddresses(Integer userId) {
         return addressRepository.getAddressByUserId(userId);
-
-//        return addressRepository.findAll().stream()
-//                .filter(address1 -> address1.getUser().getId()
-//                        .equals(user.getId()))
-//                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,23 +70,35 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public List<Item> getBasket() {
-        return null;
+    public List<StoreItem> getUserBasket(User user) {
+        return basketRepository.getBasketByUserId(user.getId()).stream()
+                .map(Basket::getStoreItem).collect(Collectors.toList());
     }
 
     @Override
-    public void addItemToBasket(Integer count) {
-
+    public void addItemToBasket(StoreItem storeItem, User user, Integer count) {
+        basketRepository.save(Basket.builder()
+                .user(user)
+                .storeItem(storeItem)
+                .count(count)
+                .build()
+        );
     }
 
     @Override
-    public void removeFromBasket(Integer id) {
+    public void removeFromBasket(User user, StoreItem storeItem) {
+        StoreItem st = (StoreItem) basketRepository.getBasketByUserId(user.getId())
+                .stream()
+                .map(Basket::getStoreItem)
+                .filter(storeItem1 -> storeItem1.equals(storeItem));
 
+
+        basketRepository.delete(basketRepository.findBasketItemByStoreItem(st));
     }
 
     @Override
-    public void clearBasket() {
-
+    public void clearBasket(User user) {
+        //basketRepository.deleteAllByUserId(user.getId());//не пашет
     }
 
     @Override

@@ -89,37 +89,48 @@ class FinalApplicationTests {
     @Test
     void contextLoads() {
 //айтемы юсер адрес
-        {
-            Iterable<Item> itemsStore = itemRepository.saveAll(
-                    List.of(
-                            item1,
-                            item2,
-                            item3
-                    )
-            );
 
-            List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
-                    .map(item -> StoreItem.builder()
-                            .appStore(appStore)
-                            .item(Item.builder().id(item.getId()).build())
-                            .price(BigDecimal.valueOf(Math.random() * 1500 + 500))
-                            .build())
-                    .collect(Collectors.toList());
-            appStore.setItems(storeItems);
+        Iterable<Item> itemsStore = itemRepository.saveAll(
+                List.of(
+                        item1,
+                        item2,
+                        item3
+                )
+        );
 
-            appStoreRepository.save(appStore);
+        List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
+                .map(item -> StoreItem.builder()
+                        .appStore(appStore)
+                        .item(Item.builder().id(item.getId()).build())
+                        .price(BigDecimal.valueOf(Math.random() * 1500 + 500))
+                        .available(true)
+                        .build())
+                .collect(Collectors.toList());
+        appStore.setItems(storeItems);
 
-            userRepository.save(ME);
+        appStoreRepository.save(appStore);
 
-            userRepository.save(NOT_ME);
+        userRepository.save(ME);
 
-            userService.addAddress(ME, newAddress);
-            userService.addAddress(NOT_ME, not_newAddress);
-        }
+        userRepository.save(NOT_ME);
+
+        userService.addAddress(ME, newAddress);
+        userService.addAddress(NOT_ME, not_newAddress);
+
 
         log.info("{}", userService.getAllUserAddresses(ME.getId()));
+
+
+        userService.addItemToBasket(storeItems.get(2), ME, 5);
+        userService.addItemToBasket(storeItems.get(0), ME, 4);
+        userService.addItemToBasket(storeItems.get(1), ME, 3);
+        userService.addItemToBasket(storeItems.get(2), NOT_ME, 5);
+
+        log.info(String.valueOf(userService.getUserBasket(ME)));
         // userService.removeAddress(1);
 
+        // userService.removeFromBasket(ME, storeItems.get(2));
+        // userService.clearBasket(ME);
     }
 
     @Test

@@ -10,6 +10,8 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
 
     void deleteById(Integer id);
 
-    @Query(value = "SELECT id from Address where id = ?1")
+    @Query(value = "SELECT * from Address where id = ?1",nativeQuery = true)
     List<Address> getAddressByUserId(Integer userId);
+
+
 }
