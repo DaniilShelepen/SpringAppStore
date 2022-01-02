@@ -1,10 +1,7 @@
 package com.daniil.courses.services;
 
 import com.daniil.courses.models.*;
-import com.daniil.courses.repositories.AddressRepository;
-import com.daniil.courses.repositories.BasketRepository;
-import com.daniil.courses.repositories.StoreItemRepository;
-import com.daniil.courses.repositories.UserRepository;
+import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceIml implements UserService {
@@ -24,28 +20,30 @@ public class UserServiceIml implements UserService {
     AddressRepository addressRepository;
     StoreItemRepository storeItemRepository;
     BasketRepository basketRepository;
+    OrderRepository orderRepository;
 
     @Autowired
     public UserServiceIml(UserRepository userRepository, AddressRepository addressRepository,
-                          StoreItemRepository storeItemRepository, BasketRepository basketRepository) {
+                          StoreItemRepository storeItemRepository, BasketRepository basketRepository,
+                          OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.storeItemRepository = storeItemRepository;
         this.basketRepository = basketRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
-    public List<Address> getAllUserAddresses(Integer userId) {
+    public List<Address> getAllAddressesByUser(Integer userId) {
         return addressRepository.getAddressByUserId(userId);
     }
 
-    @Override
-    public void removeAddress(Integer id) {
+    public void removeAddressByUser(Integer id) {
         addressRepository.deleteById(id);
     }
 
     @Override
-    public List<Address> addAddress(User user, Address address) {
+    public List<Address> addAddressByUser(User user, Address address) {
         user.setAddresses(List.of(address));
         addressRepository.save(address);
         return addressRepository.findAll().stream()
@@ -55,7 +53,7 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public Address refactorAddress(Address address) {
+    public Address refactorAddressByUser(Address address) {
 
         Address changedAddress = addressRepository.findById(address.getId()).orElseThrow(RuntimeException::new);//TODO свою тут выкинь
 
@@ -70,13 +68,13 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public List<StoreItem> getUserBasket(User user) {
-        return basketRepository.getBasketByUserId(user.getId()).stream()
+    public List<StoreItem> getBasketByUser(User user) {
+        return basketRepository.findBasketByUserId(user.getId()).stream()
                 .map(Basket::getStoreItem).collect(Collectors.toList());
     }
 
     @Override
-    public void addItemToBasket(StoreItem storeItem, User user, Integer count) {
+    public void addItemToBasketByUser(StoreItem storeItem, User user, Integer count) {
         basketRepository.save(Basket.builder()
                 .user(user)
                 .storeItem(storeItem)
@@ -86,23 +84,17 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public void removeFromBasket(User user, StoreItem storeItem) {
-        StoreItem st = (StoreItem) basketRepository.getBasketByUserId(user.getId())
-                .stream()
-                .map(Basket::getStoreItem)
-                .filter(storeItem1 -> storeItem1.equals(storeItem));
-
-
-        basketRepository.delete(basketRepository.findBasketItemByStoreItem(st));
+    public void removeFromBasketByUser(StoreItem storeItem, User user) {
+        basketRepository.deleteByStoreItemIdAndUserId(storeItem.getId(), user.getId());
     }
 
     @Override
-    public void clearBasket(User user) {
-        //basketRepository.deleteAllByUserId(user.getId());//не пашет
+    public void clearBasketByUser(User user) {
+        basketRepository.deleteAllByUserId(user.getId());
     }
 
     @Override
-    public List<StoreItem> viewAllItems() {
+    public List<StoreItem> viewAvailableItems() {
         return storeItemRepository.findAll().stream()
                 .filter(StoreItem::isAvailable).collect(Collectors.toList());
     }
@@ -113,7 +105,9 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public List<Order> getAllOrders() {
-        return null;
+    public List<UserOrder> getAllOrdersByUser(User user) {
+        return orderRepository.findAllByUserId(user.getId()).stream()
+                .map(order -> new UserOrder(order.getStatus(),order.getDate(),order.getDateOfRefactoring()))
+                .collect(Collectors.toList());
     }
 }

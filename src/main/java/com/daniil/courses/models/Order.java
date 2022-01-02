@@ -22,6 +22,8 @@ public class Order {
     protected String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date date;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    protected Date dateOfRefactoring;
     @ManyToOne
     protected Address address;
     @ManyToOne(fetch = FetchType.EAGER)

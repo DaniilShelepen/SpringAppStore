@@ -23,7 +23,7 @@ public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne
+    @ManyToOne
     User user;
 //    @OneToMany//(mappedBy = "basket", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 //    List<StoreItem> storeItem;

@@ -4,11 +4,9 @@ import com.daniil.courses.models.Address;
 import com.daniil.courses.models.AppStore;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.AddressRepository;
-import com.daniil.courses.repositories.AppStoreRepository;
-import com.daniil.courses.repositories.ItemRepository;
-import com.daniil.courses.repositories.UserRepository;
+import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
+import com.daniil.courses.services.FilterService;
 import com.daniil.courses.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -39,10 +37,14 @@ class FinalApplicationTests {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    StoreItemRepository storeItemRepository;
 
     @Autowired
     UserService userService;
 
+    @Autowired
+    FilterService filterService;
 
     private static final Item item1 = new Item(null, "MacOs", "good very mathafaka",
             "PC", "SSD 1024", "A93", new Date(1_565_568_000_000L));
@@ -114,23 +116,26 @@ class FinalApplicationTests {
 
         userRepository.save(NOT_ME);
 
-        userService.addAddress(ME, newAddress);
-        userService.addAddress(NOT_ME, not_newAddress);
+        userService.addAddressByUser(ME, newAddress);
+        userService.addAddressByUser(NOT_ME, not_newAddress);
 
 
-        log.info("{}", userService.getAllUserAddresses(ME.getId()));
+        // log.info("{}", userService.getAllAddressesByUser(ME.getId()));
 
 
-        userService.addItemToBasket(storeItems.get(2), ME, 5);
-        userService.addItemToBasket(storeItems.get(0), ME, 4);
-        userService.addItemToBasket(storeItems.get(1), ME, 3);
-        userService.addItemToBasket(storeItems.get(2), NOT_ME, 5);
+        userService.addItemToBasketByUser(storeItems.get(2), ME, 5);
+        userService.addItemToBasketByUser(storeItems.get(0), ME, 4);
+        userService.addItemToBasketByUser(storeItems.get(1), ME, 3);
+        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME, 5);
 
-        log.info(String.valueOf(userService.getUserBasket(ME)));
+        //   log.info(String.valueOf(userService.getUserBasket(ME)));
         // userService.removeAddress(1);
 
-        // userService.removeFromBasket(ME, storeItems.get(2));
-        // userService.clearBasket(ME);
+        // userService.removeFromBasket(storeItems.get(2), ME);
+        userService.clearBasketByUser(ME);
+
+
+
     }
 
     @Test
