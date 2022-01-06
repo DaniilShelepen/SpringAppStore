@@ -8,6 +8,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class UserOrder {
     protected String status;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

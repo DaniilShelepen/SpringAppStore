@@ -2,10 +2,14 @@ package com.daniil.courses.services;
 
 import com.daniil.courses.models.StoreItem;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface ManagerService {
-    StoreItem addNewItem();
+
+    StoreItem addNewItem(String name, String description, String type, String driverConfiguration,
+                         String CPU, Date releaseDate, BigDecimal price,boolean available);
 
     void setAvailable(Integer storeItem_id);
 

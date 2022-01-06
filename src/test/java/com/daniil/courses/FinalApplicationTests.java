@@ -1,12 +1,10 @@
 package com.daniil.courses;
 
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.AppStore;
-import com.daniil.courses.models.Item;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.models.*;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
+import com.daniil.courses.services.ManagerService;
 import com.daniil.courses.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -36,12 +34,16 @@ class FinalApplicationTests {
     AddressRepository addressRepository;
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     StoreItemRepository storeItemRepository;
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ManagerService managerService;
 
     @Autowired
     FilterService filterService;
@@ -128,13 +130,22 @@ class FinalApplicationTests {
         userService.addItemToBasketByUser(storeItems.get(1), ME, 3);
         userService.addItemToBasketByUser(storeItems.get(2), NOT_ME, 5);
 
+        orderRepository.save(Order.builder()
+                .status("DONE")
+                .address(newAddress)
+                .user(ME)
+                .date(new Date(1_565_568_000_032L))
+                .dateOfRefactoring(new Date(1_565_568_000_084L))
+                .build());
+        log.info("{}", userService.getAllOrdersByUser(ME));
         //   log.info(String.valueOf(userService.getUserBasket(ME)));
         // userService.removeAddress(1);
 
         // userService.removeFromBasket(storeItems.get(2), ME);
         userService.clearBasketByUser(ME);
 
-
+        managerService.addNewItem("item","norm","da","nu norm takoe",
+                "cpu da",new Date(1_213_3333_2345L),BigDecimal.valueOf(1242.77),true);
 
     }
 
