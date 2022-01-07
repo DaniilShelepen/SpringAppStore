@@ -1,5 +1,6 @@
 package com.daniil.courses.services;
 
+import com.daniil.courses.exceptions.AddressIsNotFound;
 import com.daniil.courses.models.*;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
@@ -37,8 +38,8 @@ public class UserServiceIml implements UserService {
         return addressRepository.getAddressByUserId(userId);
     }
 
-    public void removeAddressByUser(Integer id) {
-        addressRepository.deleteById(id);
+    public void removeAddressByUser(Address address) {
+        addressRepository.deleteById(address.getId());
     }
 
     @Override
@@ -54,7 +55,7 @@ public class UserServiceIml implements UserService {
     @Override
     public Address refactorAddressByUser(Address address) {
 
-        Address changedAddress = addressRepository.findById(address.getId()).orElseThrow(RuntimeException::new);//TODO свою тут выкинь
+        Address changedAddress = addressRepository.findById(address.getId()).orElseThrow(() -> new AddressIsNotFound("Address is not found"));
 
         changedAddress.setCity(address.getCity());
         changedAddress.setStreet(address.getStreet());

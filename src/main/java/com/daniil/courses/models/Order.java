@@ -28,4 +28,5 @@ public class Order {
     protected Address address;
     @ManyToOne(fetch = FetchType.EAGER)
     protected User user;
+
 }

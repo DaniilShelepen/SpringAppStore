@@ -5,6 +5,7 @@ import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
 import com.daniil.courses.services.ManagerService;
+import com.daniil.courses.services.OrderStatus;
 import com.daniil.courses.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -23,13 +24,10 @@ import java.util.stream.StreamSupport;
 @SpringBootTest(classes = FinalApplication.class)
 class FinalApplicationTests {
 
-    private static final AppStore appStore = AppStore.builder()
-            .build();
 
     @Autowired
     ItemRepository itemRepository;
-    @Autowired
-    AppStoreRepository appStoreRepository;
+
     @Autowired
     AddressRepository addressRepository;
     @Autowired
@@ -89,6 +87,29 @@ class FinalApplicationTests {
             .user(NOT_ME)
             .build();
 
+    Order order = Order.builder()
+            .address(newAddress)
+            .user(ME)
+            .date(new Date(123_442_67L))
+            .dateOfRefactoring(new Date(123_442_67L))
+            .status(OrderStatus.PaymentAccepted.toString())
+            .build();
+
+    Order order1 = Order.builder()
+            .address(newAddress)
+            .user(ME)
+            .date(new Date(123432_3332_442_67L))
+            .dateOfRefactoring(new Date(123_442_67L))
+            .status(OrderStatus.AwaitingConfirmationOfPayment.toString())
+            .build();
+
+    Order order2 = Order.builder()
+            .address(newAddress)
+            .user(ME)
+            .date(new Date(123_14_67L))
+            .dateOfRefactoring(new Date(123_442_67L))
+            .status(OrderStatus.PaymentAccepted.toString())
+            .build();
 
     @Test
     void contextLoads() {
@@ -104,24 +125,26 @@ class FinalApplicationTests {
 
         List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
                 .map(item -> StoreItem.builder()
-                        .appStore(appStore)
                         .item(Item.builder().id(item.getId()).build())
                         .price(BigDecimal.valueOf(Math.random() * 1500 + 500))
                         .available(true)
                         .build())
                 .collect(Collectors.toList());
-        appStore.setItems(storeItems);
 
-        appStoreRepository.save(appStore);
 
+        storeItemRepository.saveAll(storeItems);
         userRepository.save(ME);
-
         userRepository.save(NOT_ME);
 
         userService.addAddressByUser(ME, newAddress);
         userService.addAddressByUser(NOT_ME, not_newAddress);
 
 
+        orderRepository.save(order);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        log.info("{}", filterService.filterUserOrderByStatus(ME,OrderStatus.PaymentAccepted,OrderStatus.AwaitingConfirmationOfPayment));
         // log.info("{}", userService.getAllAddressesByUser(ME.getId()));
 
 
@@ -130,13 +153,13 @@ class FinalApplicationTests {
         userService.addItemToBasketByUser(storeItems.get(1), ME, 3);
         userService.addItemToBasketByUser(storeItems.get(2), NOT_ME, 5);
 
-        orderRepository.save(Order.builder()
-                .status("DONE")
-                .address(newAddress)
-                .user(ME)
-                .date(new Date(1_565_568_000_032L))
-                .dateOfRefactoring(new Date(1_565_568_000_084L))
-                .build());
+//        orderRepository.save(Order.builder()
+//                .status("DONE")
+//                .address(newAddress)
+//                .user(ME)
+//                .date(new Date(1_565_568_000_032L))
+//                .dateOfRefactoring(new Date(1_565_568_000_084L))
+//                .build());
         log.info("{}", userService.getAllOrdersByUser(ME));
         //   log.info(String.valueOf(userService.getUserBasket(ME)));
         // userService.removeAddress(1);
@@ -144,9 +167,11 @@ class FinalApplicationTests {
         // userService.removeFromBasket(storeItems.get(2), ME);
         userService.clearBasketByUser(ME);
 
-        managerService.addNewItem("item","norm","da","nu norm takoe",
-                "cpu da",new Date(1_213_3333_2345L),BigDecimal.valueOf(1242.77),true);
+        managerService.addNewItem("item", "norm", "da", "nu norm takoe",
+                "cpu da", new Date(1_213_3333_2345L), BigDecimal.valueOf(1242.77), true);
 
+        managerService.setAvailable(storeItemRepository.findById(2).orElse(storeItems.get(1)), false);
+        log.info("{}", managerService.viewAllStoreItems());
     }
 
     @Test

@@ -1,9 +1,8 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.models.AppStore;
+import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.AppStoreRepository;
 import com.daniil.courses.repositories.ItemRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +17,11 @@ public class ManagerServiceIml implements ManagerService {
 
     ItemRepository itemRepository;
     StoreItemRepository storeItemRepository;
-    AppStoreRepository appStoreRepository;
 
     @Autowired
-    public ManagerServiceIml(ItemRepository itemRepository, StoreItemRepository storeItemRepository, AppStoreRepository appStoreRepository) {
+    public ManagerServiceIml(ItemRepository itemRepository, StoreItemRepository storeItemRepository) {
         this.itemRepository = itemRepository;
         this.storeItemRepository = storeItemRepository;
-        this.appStoreRepository = appStoreRepository;
     }
 
     @Override
@@ -43,13 +40,10 @@ public class ManagerServiceIml implements ManagerService {
         itemRepository.save(Item);
 
 
-        appStoreRepository.save(AppStore.builder().build());//вот тут типо создам если пусто
-
         StoreItem StoreItem = com.daniil.courses.models.StoreItem.builder()
                 .price(price)
                 .available(available)
                 .item(Item)
-                .appStore(appStoreRepository.getById(1))//и вот тяну из бд
                 .build();
 
         storeItemRepository.save(StoreItem);
@@ -59,12 +53,14 @@ public class ManagerServiceIml implements ManagerService {
     }
 
     @Override
-    public void setAvailable(Integer storeItem_id) {
-
+    public void setAvailable(StoreItem storeItem, boolean available) {
+        StoreItem storeItem1 = storeItemRepository.findById(storeItem.getId()).orElseThrow(() -> new StoreItemIsNotFound("Store item is not found"));
+        storeItem1.setAvailable(available);
+        storeItemRepository.save(storeItem1);
     }
 
     @Override
     public List<StoreItem> viewAllStoreItems() {
-        return null;
+        return storeItemRepository.findAll();
     }
 }

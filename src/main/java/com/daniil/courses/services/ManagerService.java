@@ -11,7 +11,7 @@ public interface ManagerService {
     StoreItem addNewItem(String name, String description, String type, String driverConfiguration,
                          String CPU, Date releaseDate, BigDecimal price,boolean available);
 
-    void setAvailable(Integer storeItem_id);
+    void setAvailable(StoreItem storeItem, boolean available);
 
     List<StoreItem> viewAllStoreItems();
 }

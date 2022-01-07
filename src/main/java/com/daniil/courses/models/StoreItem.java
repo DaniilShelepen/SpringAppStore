@@ -20,8 +20,6 @@ public class StoreItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private AppStore appStore;
     @ManyToOne
     private Item item;
 
