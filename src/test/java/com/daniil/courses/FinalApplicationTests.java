@@ -75,6 +75,18 @@ class FinalApplicationTests {
             .floor("4")
             .street("loxovskay")
             .user(ME)
+            .visible(true)
+            .build();
+
+    Address newAddress2 = Address.builder()
+            .base("dad222a")
+            .city("NP2")
+            .entrance("chto")
+            .flat("1522")
+            .floor("4")
+            .street("lo222xovskay")
+            .user(ME)
+            .visible(true)
             .build();
 
     Address not_newAddress = Address.builder()
@@ -85,6 +97,18 @@ class FinalApplicationTests {
             .floor("41111")
             .street("lox1111ovskay")
             .user(NOT_ME)
+            .visible(true)
+            .build();
+
+    Address not_newAddress1 = Address.builder()
+            .base("da11da")
+            .city("N11P")
+            .entrance("c111hto1")
+            .flat("111115")
+            .floor("41111")
+            .street("lox1111ovskay")
+            .user(NOT_ME)
+            .visible(true)
             .build();
 
     Order order = Order.builder()
@@ -136,22 +160,24 @@ class FinalApplicationTests {
         userRepository.save(ME);
         userRepository.save(NOT_ME);
 
-        userService.addAddressByUser(ME, newAddress);
-        userService.addAddressByUser(NOT_ME, not_newAddress);
+        userService.addAddressByUser(ME.getId(), newAddress);
+        userService.addAddressByUser(ME.getId(), not_newAddress1);
+
+        userService.addAddressByUser(NOT_ME.getId(), not_newAddress);
 
 
         orderRepository.save(order);
         orderRepository.save(order1);
         orderRepository.save(order2);
 
-        log.info("{}", filterService.filterUserOrderByStatus(ME,OrderStatus.PaymentAccepted,OrderStatus.AwaitingConfirmationOfPayment));
+        log.info("{}", filterService.filterUserOrderByStatus(ME, OrderStatus.PaymentAccepted, OrderStatus.AwaitingConfirmationOfPayment));//TODO
         // log.info("{}", userService.getAllAddressesByUser(ME.getId()));
 
 
-        userService.addItemToBasketByUser(storeItems.get(2), ME, 5);
-        userService.addItemToBasketByUser(storeItems.get(0), ME, 4);
-        userService.addItemToBasketByUser(storeItems.get(1), ME, 3);
-        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME, 5);
+        userService.addItemToBasketByUser(storeItems.get(2), ME.getId(), 5);
+        userService.addItemToBasketByUser(storeItems.get(0), ME.getId(), 4);
+        userService.addItemToBasketByUser(storeItems.get(1), ME.getId(), 3);
+        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME.getId(), 5);
 
 //        orderRepository.save(Order.builder()
 //                .status("DONE")
@@ -159,19 +185,21 @@ class FinalApplicationTests {
 //                .user(ME)
 //                .date(new Date(1_565_568_000_032L))
 //                .dateOfRefactoring(new Date(1_565_568_000_084L))
+//                .price(BigDecimal.valueOf(21321))
 //                .build());
-        log.info("{}", userService.getAllOrdersByUser(ME));
+        // log.info("{}", userService.getAllOrdersByUser(ME));
         //   log.info(String.valueOf(userService.getUserBasket(ME)));
-        // userService.removeAddress(1);
 
-        // userService.removeFromBasket(storeItems.get(2), ME);
-        userService.clearBasketByUser(ME);
+        // userService.removeFromBasketByUser(storeItems.get(2), ME.getId());
+        //userService.clearBasketByUser(ME.getId());
 
-        managerService.addNewItem("item", "norm", "da", "nu norm takoe",
-                "cpu da", new Date(1_213_3333_2345L), BigDecimal.valueOf(1242.77), true);
-
-        managerService.setAvailable(storeItemRepository.findById(2).orElse(storeItems.get(1)), false);
-        log.info("{}", managerService.viewAllStoreItems());
+//        managerService.addNewItem("item", "norm", "da", "nu norm takoe",
+//                "cpu da", new Date(1_213_3333_2345L), BigDecimal.valueOf(1242.77), true);
+//
+//        managerService.setAvailable(storeItemRepository.findById(2).orElse(storeItems.get(1)), false);
+//        log.info("{}", managerService.viewAllStoreItems());
+        //userService.removeAddressByUser(newAddress, ME.getId());
+        userService.refactorAddressByUser(newAddress, ME.getId());
     }
 
     @Test

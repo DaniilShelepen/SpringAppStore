@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -24,6 +25,7 @@ public class Order {
     protected Date date;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date dateOfRefactoring;
+    protected BigDecimal price;
     @ManyToOne
     protected Address address;
     @ManyToOne(fetch = FetchType.EAGER)

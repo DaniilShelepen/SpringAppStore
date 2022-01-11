@@ -15,5 +15,5 @@ public interface BasketRepository extends JpaRepository<Basket, Integer> {
     void deleteByStoreItemIdAndUserId(Integer storeItem_id, Integer user_id);
 
     @Transactional
-    void deleteAllByUserId(Integer user_id);
+    void deleteAllByUserId(Integer userId);
 }

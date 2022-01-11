@@ -36,4 +36,16 @@ public class ApiExceptionHandler {
         );
         return new ResponseEntity<>(apiException, serverError);
     }
+
+    @ExceptionHandler({UserNotFound.class})
+    public ResponseEntity<Object> handlerUserNotFound(UserNotFound exception){
+        HttpStatus serverError = HttpStatus.INTERNAL_SERVER_ERROR;
+        ApiException apiException = new ApiException(
+                exception.getMessage(),
+                exception,
+                serverError,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        return new ResponseEntity<>(apiException,serverError);
+    }
 }

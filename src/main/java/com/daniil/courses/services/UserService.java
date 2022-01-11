@@ -13,25 +13,25 @@ public interface UserService {
     List<Address> getAllAddressesByUser(Integer userId);
 
     /** удалить адрес */
-    void removeAddressByUser(Address address);
+    void removeAddressByUser(Integer addressId, Integer userId);
 
     /** добавить адрес */
-    List<Address> addAddressByUser(User user, Address address);
+    List<Address> addAddressByUser(Integer userId, Address address);
 
     /** изменить адрес */
-     Address refactorAddressByUser (Address address);
+     Address refactorAddressByUser (Address address,Integer userId);
 
     /** получить корзину */
-    List<StoreItem> getBasketByUser(User user);
+    List<StoreItem> getBasketByUser(Integer userId);
 
     /** добавить товар в корзину */
-    void addItemToBasketByUser(StoreItem storeItem, User user, Integer count);
+    void addItemToBasketByUser(StoreItem storeItem, Integer userId, Integer count);
 
     /** удалить товар из корзины */
-    void removeFromBasketByUser(StoreItem storeItem, User user);
+    void removeFromBasketByUser(Integer storeItemId, Integer userId);
 
     /** очистить корзину */
-    void clearBasketByUser(User user);
+    void clearBasketByUser(Integer userId);
 
     /** получить все доступные товары */
     List<StoreItem> viewAvailableItems();
@@ -40,6 +40,9 @@ public interface UserService {
     void buyItems(Integer... id);
 
     /** получить все заказы */
-    List<UserOrder> getAllOrdersByUser(User user);
+    List<UserOrder> getAllOrdersByUser(Integer userId);
+
+    /** создание юзера */
+    User createUser(User user);
 
 }

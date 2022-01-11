@@ -26,8 +26,10 @@ public class Address {
     protected String flat;
     protected String floor;
     protected String entrance;
+    protected boolean visible;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     protected User user;
 
 }
