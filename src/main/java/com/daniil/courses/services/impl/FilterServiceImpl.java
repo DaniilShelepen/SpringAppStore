@@ -1,4 +1,4 @@
-package com.daniil.courses.services;
+package com.daniil.courses.services.impl;
 
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
@@ -6,6 +6,8 @@ import com.daniil.courses.models.UserOrder;
 import com.daniil.courses.repositories.OrderRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.role_models.User;
+import com.daniil.courses.services.FilterService;
+import com.daniil.courses.services.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j//TODO убери потом
-public class FilterServiceIml implements FilterService {
+public class FilterServiceImpl implements FilterService {
 
     StoreItemRepository storeItemRepository;
     OrderRepository orderRepository;
 
     @Autowired
-    public FilterServiceIml(StoreItemRepository storeItemRepository, OrderRepository orderRepository) {
+    public FilterServiceImpl(StoreItemRepository storeItemRepository, OrderRepository orderRepository) {
         this.storeItemRepository = storeItemRepository;
         this.orderRepository = orderRepository;
     }
@@ -57,7 +59,7 @@ public class FilterServiceIml implements FilterService {
     }
 
     @Override
-    public List<UserOrder> filterUserOrderByStatus(User user, OrderStatus ... orderStatuses) {
+    public List<UserOrder> filterUserOrderByStatus(User user, OrderStatus... orderStatuses) {
 
 
         boolean a = orderRepository.findAllByUserId(user.getId()).stream().anyMatch(

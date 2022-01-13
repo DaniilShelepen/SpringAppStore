@@ -1,5 +1,9 @@
 package com.daniil.courses.services;
 
+import com.daniil.courses.dto.AddressDto;
+import com.daniil.courses.dto.BasketDto;
+import com.daniil.courses.dto.StoreItemDto;
+import com.daniil.courses.dto.UserDto;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
@@ -9,40 +13,64 @@ import com.daniil.courses.role_models.User;
 import java.util.List;
 
 public interface UserService {
-    /** получить все адреса юзера */
-    List<Address> getAllAddressesByUser(Integer userId);
+    /**
+     * получить все адреса юзера
+     */
+    List<AddressDto> getAllAddressesByUser(Integer userId);
 
-    /** удалить адрес */
+    /**
+     * удалить адрес
+     */
     void removeAddressByUser(Integer addressId, Integer userId);
 
-    /** добавить адрес */
-    List<Address> addAddressByUser(Integer userId, Address address);
+    /**
+     * добавить адрес
+     */
+    AddressDto addAddressByUser(Integer userId, AddressDto addressdto);
 
-    /** изменить адрес */
-     Address refactorAddressByUser (Address address,Integer userId);
+    /**
+     * изменить адрес
+     */
+    AddressDto refactorAddressByUser(AddressDto addressDto, Integer userId, Integer addressId);
 
-    /** получить корзину */
-    List<StoreItem> getBasketByUser(Integer userId);
+    /**
+     * получить корзину
+     */
+    List<BasketDto> getBasketByUser(Integer userId);
 
-    /** добавить товар в корзину */
-    void addItemToBasketByUser(StoreItem storeItem, Integer userId, Integer count);
+    /**
+     * добавить товар в корзину
+     */
+    void addItemToBasketByUser(StoreItemDto storeItemDto, Integer userId, Integer count);
 
-    /** удалить товар из корзины */
+    /**
+     * удалить товар из корзины
+     */
     void removeFromBasketByUser(Integer storeItemId, Integer userId);
 
-    /** очистить корзину */
+    /**
+     * очистить корзину
+     */
     void clearBasketByUser(Integer userId);
 
-    /** получить все доступные товары */
-    List<StoreItem> viewAvailableItems();
+    /**
+     * получить все доступные товары
+     */
+    List<StoreItemDto> viewAvailableItems();
 
-    /** купить товар */
+    /**
+     * купить товар
+     */
     void buyItems(Integer... id);
 
-    /** получить все заказы */
+    /**
+     * получить все заказы
+     */
     List<UserOrder> getAllOrdersByUser(Integer userId);
 
-    /** создание юзера */
-    User createUser(User user);
+    /**
+     * создание юзера
+     */
+    UserDto createUser(UserDto userDto);
 
 }

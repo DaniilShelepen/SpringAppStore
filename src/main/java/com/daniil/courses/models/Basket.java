@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -25,17 +27,14 @@ public class Basket {
     private Integer id;
     @ManyToOne
     User user;
-//    @OneToMany//(mappedBy = "basket", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-//    List<StoreItem> storeItem;
 
-    //@ManyToOne
     @ManyToOne
     @JoinColumn(name = "store_item_id")
     StoreItem storeItem;
 
     protected long count;
 
-
+    protected BigDecimal price;
 
 }
 

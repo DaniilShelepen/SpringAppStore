@@ -1,5 +1,9 @@
 package com.daniil.courses.controller;
 
+import com.daniil.courses.dto.AddressDto;
+import com.daniil.courses.dto.BasketDto;
+import com.daniil.courses.dto.StoreItemDto;
+import com.daniil.courses.dto.UserDto;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.models.UserOrder;
@@ -25,13 +29,13 @@ public class UserController {
 
     @GetMapping("storeItems")
     @Operation(description = "Вывод всех доступных товаров")
-    public List<StoreItem> getAvailableShopItems() {
+    public List<StoreItemDto> getAvailableShopItems() {
         return userService.viewAvailableItems();
     }
 
     @GetMapping("{userId}/addresses")
     @Operation(description = "Получить адреса юзера")
-    public List<Address> getAddresses(@PathVariable Integer userId) {
+    public List<AddressDto> getAddresses(@PathVariable Integer userId) {
         return userService.getAllAddressesByUser(userId);
     }
 
@@ -43,26 +47,26 @@ public class UserController {
 
     @PostMapping("{userId}/addAddress")
     @Operation(description = "Добавить адрес")
-    public List<Address> addAddress(@RequestBody Address address, @PathVariable Integer userId) {
-        return userService.addAddressByUser(userId, address);
+    public AddressDto addAddress(@RequestBody AddressDto addressDto, @PathVariable Integer userId) {
+        return userService.addAddressByUser(userId, addressDto);
     }
 
-    @PutMapping("{userId}/refactorAddress")
+    @PutMapping("{userId}/refactorAddress/{addressId}")
     @Operation(description = "Редактировать адрес")
-    public Address refactorAddress(@RequestBody Address address, @PathVariable Integer userId) {
-        return userService.refactorAddressByUser(address, userId);
+    public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer userId, @PathVariable  Integer addressId) {
+        return userService.refactorAddressByUser(addressDto, userId, addressId);
     }
 
     @GetMapping("{userId}/Basket")
     @Operation(description = "Получить корзину")
-    public List<StoreItem> Basket(@PathVariable Integer userId) {
+    public List<BasketDto> Basket(@PathVariable Integer userId) {
         return userService.getBasketByUser(userId);
     }
 
     @PostMapping("{userId}/{count}/addToBasket")
     @Operation(description = "Добавить товар в корзину")
-    public void addToBasket(@RequestBody StoreItem storeItem, @PathVariable Integer count, @PathVariable Integer userId) {
-        userService.addItemToBasketByUser(storeItem, userId, count);
+    public void addToBasket(@RequestBody StoreItemDto storeItemDto, @PathVariable Integer count, @PathVariable Integer userId) {
+        userService.addItemToBasketByUser(storeItemDto, userId, count);
     }
 
     @DeleteMapping("{userId}/{storeItemId}/refactorAddress")
@@ -89,7 +93,7 @@ public class UserController {
 
     @PostMapping("createUser")
     @Operation(description = "Создание нового юзера")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDto createUser(@RequestBody UserDto userdto) {
+        return userService.createUser(userdto);
     }
 }

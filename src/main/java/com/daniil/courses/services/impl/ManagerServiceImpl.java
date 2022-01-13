@@ -1,54 +1,53 @@
-package com.daniil.courses.services;
+package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dto.StoreItemDto;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.ItemRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
+import com.daniil.courses.services.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Service
-public class ManagerServiceIml implements ManagerService {
+public class ManagerServiceImpl implements ManagerService {
 
     ItemRepository itemRepository;
     StoreItemRepository storeItemRepository;
 
     @Autowired
-    public ManagerServiceIml(ItemRepository itemRepository, StoreItemRepository storeItemRepository) {
+    public ManagerServiceImpl(ItemRepository itemRepository, StoreItemRepository storeItemRepository) {
         this.itemRepository = itemRepository;
         this.storeItemRepository = storeItemRepository;
     }
 
     @Override
-    public StoreItem addNewItem(String name, String description, String type, String driverConfiguration,
-                                String CPU, Date releaseDate, BigDecimal price, boolean available) {
+    public StoreItemDto addNewItem(StoreItemDto storeItemDto) {
 
         Item Item = com.daniil.courses.models.Item.builder()
-                .name(name)
-                .description(description)
-                .type(type)
-                .driverConfiguration(driverConfiguration)
-                .CPU(CPU)
-                .releaseDate(releaseDate)
+                .name(storeItemDto.getItem().getName())
+                .description(storeItemDto.getItem().getDescription())
+                .type(storeItemDto.getItem().getType())
+                .driverConfiguration(storeItemDto.getItem().getDriverConfiguration())
+                .CPU(storeItemDto.getItem().getCPU())
+                .releaseDate(storeItemDto.getItem().getReleaseDate())
                 .build();
 
         itemRepository.save(Item);
 
 
         StoreItem StoreItem = com.daniil.courses.models.StoreItem.builder()
-                .price(price)
-                .available(available)
+                .price(storeItemDto.getPrice())
+                .available(storeItemDto.isAvailable())
                 .item(Item)
                 .build();
 
         storeItemRepository.save(StoreItem);
 
-        return StoreItem;
+        return storeItemDto;
 
     }
 

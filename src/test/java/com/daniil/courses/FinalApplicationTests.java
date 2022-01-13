@@ -56,13 +56,17 @@ class FinalApplicationTests {
 
 
     private static final User ME = User.builder()
-            .userName("Daniil")
+            .name("Daniil")
+            .surname("aaa212aa")
+            .birthday(new Date(56132131L))
             .password("123")
             .phoneNumber("+37529234567")
             .build();
 
     private static final User NOT_ME = User.builder()
-            .userName("Daniil12")
+            .name("Daniil12")
+            .surname("aaaaa")
+            .birthday(new Date(123132131L))
             .password("12345")
             .phoneNumber("+3752555567")
             .build();
@@ -147,6 +151,7 @@ class FinalApplicationTests {
                 )
         );
 
+
         List<StoreItem> storeItems = StreamSupport.stream(itemsStore.spliterator(), false)
                 .map(item -> StoreItem.builder()
                         .item(Item.builder().id(item.getId()).build())
@@ -160,10 +165,10 @@ class FinalApplicationTests {
         userRepository.save(ME);
         userRepository.save(NOT_ME);
 
-        userService.addAddressByUser(ME.getId(), newAddress);
-        userService.addAddressByUser(ME.getId(), not_newAddress1);
-
-        userService.addAddressByUser(NOT_ME.getId(), not_newAddress);
+//        userService.addAddressByUser(ME.getId(), newAddress);
+//        userService.addAddressByUser(ME.getId(), not_newAddress1);
+//
+//        userService.addAddressByUser(NOT_ME.getId(), not_newAddress);
 
 
         orderRepository.save(order);
@@ -174,10 +179,10 @@ class FinalApplicationTests {
         // log.info("{}", userService.getAllAddressesByUser(ME.getId()));
 
 
-        userService.addItemToBasketByUser(storeItems.get(2), ME.getId(), 5);
-        userService.addItemToBasketByUser(storeItems.get(0), ME.getId(), 4);
-        userService.addItemToBasketByUser(storeItems.get(1), ME.getId(), 3);
-        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME.getId(), 5);
+//        userService.addItemToBasketByUser(storeItems.get(2), ME.getId(), 5);
+//        userService.addItemToBasketByUser(storeItems.get(0), ME.getId(), 4);
+//        userService.addItemToBasketByUser(storeItems.get(1), ME.getId(), 3);
+//        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME.getId(), 5);
 
 //        orderRepository.save(Order.builder()
 //                .status("DONE")
@@ -199,7 +204,7 @@ class FinalApplicationTests {
 //        managerService.setAvailable(storeItemRepository.findById(2).orElse(storeItems.get(1)), false);
 //        log.info("{}", managerService.viewAllStoreItems());
         //userService.removeAddressByUser(newAddress, ME.getId());
-        userService.refactorAddressByUser(newAddress, ME.getId());
+        // userService.refactorAddressByUser(newAddress, ME.getId());
     }
 
     @Test

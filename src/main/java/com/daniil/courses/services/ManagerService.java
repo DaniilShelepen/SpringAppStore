@@ -1,5 +1,6 @@
 package com.daniil.courses.services;
 
+import com.daniil.courses.dto.StoreItemDto;
 import com.daniil.courses.models.StoreItem;
 
 import java.math.BigDecimal;
@@ -8,8 +9,7 @@ import java.util.List;
 
 public interface ManagerService {
 
-    StoreItem addNewItem(String name, String description, String type, String driverConfiguration,
-                         String CPU, Date releaseDate, BigDecimal price,boolean available);
+    StoreItemDto addNewItem(StoreItemDto storeItemDto);
 
     void setAvailable(StoreItem storeItem, boolean available);
 

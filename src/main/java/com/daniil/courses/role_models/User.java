@@ -5,9 +5,11 @@ import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.Order;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "store_user")
@@ -17,11 +19,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    protected String userName;
+    protected String name;
+    protected String surname;
     protected String password;
     // @Pattern(value = "^1([345789])\\d{9}$")
     @NotBlank(message = "Номер телефона не может быть пустым")
     protected String phoneNumber;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    protected Date birthday;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
