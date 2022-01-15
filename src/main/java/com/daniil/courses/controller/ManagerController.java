@@ -22,7 +22,7 @@ public class ManagerController {
         return managerService.addNewItem(itemDto, managerId, price, available);
     }
 
-    @PutMapping("{managerId}/setAvailable/{storeItemId}/{available}")
+    @PutMapping(value = "/{managerId}/setAvailable/{storeItemId}/{available}")
     @Operation(description = "Установить доступ к товару")
     public void setAvailable(@PathVariable Integer storeItemId, @PathVariable boolean available, @PathVariable Integer managerId) {
         managerService.setAvailable(storeItemId, available, managerId);

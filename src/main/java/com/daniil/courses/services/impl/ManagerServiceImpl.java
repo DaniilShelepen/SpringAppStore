@@ -53,14 +53,8 @@ public class ManagerServiceImpl implements ManagerService {
         itemRepository.save(item);
         storeItemRepository.save(storeItem);
 
-//        return  storeItemRepository.findById(storeItem.getId()).stream()
-//                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice())).findFirst().orElseThrow();//это не баг, это фича
-
-        return StoreItemDto.builder()
-                .item(item)
-                .price(storeItem.getPrice())
-                .available(storeItem.isAvailable())
-                .build();
+        return (StoreItemDto) storeItemRepository.findById(storeItem.getId()).stream()
+                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice()));
     }
 
     @Override
@@ -109,7 +103,7 @@ public class ManagerServiceImpl implements ManagerService {
         //itemRepository.save(findItem);// refactorStoreItem.getItem().getId()//TODO тут поиграй надо сейвить этот айтем или он сам гений(типо по айди найди и засейви айтем)
         storeItemRepository.save(refactorStoreItem);
 
-        return storeItemRepository.findById(refactorStoreItem.getId()).stream()
-                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice())).findFirst().orElseThrow();
+        return (StoreItemDto) storeItemRepository.findById(refactorStoreItem.getId()).stream()
+                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice()));
     }
 }
