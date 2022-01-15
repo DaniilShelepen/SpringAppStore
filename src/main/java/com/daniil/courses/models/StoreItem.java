@@ -1,5 +1,6 @@
 package com.daniil.courses.models;
 
+import com.daniil.courses.role_models.Manager;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -22,5 +23,7 @@ public class StoreItem {
     private Integer id;
     @ManyToOne
     private Item item;
-
+    @ManyToOne
+    @JoinColumn(name = "refactor_by")
+    private Manager manager;
 }

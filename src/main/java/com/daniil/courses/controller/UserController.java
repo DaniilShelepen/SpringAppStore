@@ -22,8 +22,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("api/users/")
 @RequiredArgsConstructor
 public class UserController {
-    private final FilterService filterService;
-    private final ManagerService managerService;
     private final UserService userService;
 
 

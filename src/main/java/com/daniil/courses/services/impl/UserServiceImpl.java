@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userdto) {
-        if (userRepository.findByPhoneNumber(userdto.getPhoneNumber()))
+        if (userRepository.findByPhoneNumber(userdto.getPhoneNumber()) != null)
             throw new UserAlreadyExist("User with this phone number already exist!");
         userRepository.save(User.builder()
                 .name(userdto.getName())

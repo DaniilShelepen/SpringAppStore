@@ -65,7 +65,7 @@ public class FilterServiceImpl implements FilterService {
         boolean a = orderRepository.findAllByUserId(user.getId()).stream().anyMatch(
                 order -> order.getStatus().contains(Arrays.toString(orderStatuses)));
 
-        if(a) log.info("aaaaaaaaaaaaaaaaaaaaaa");
+        if(a) log.info("aaaaaaaaaaaaaaaaaaaaaa");//TODO говно доделать
 
         return orderRepository.findAllByUserId(user.getId()).stream()
                 .filter(order -> order.getStatus().contains(Arrays.toString(orderStatuses)))

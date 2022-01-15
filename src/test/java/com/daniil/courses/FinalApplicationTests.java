@@ -1,7 +1,10 @@
 package com.daniil.courses;
 
+import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.models.*;
 import com.daniil.courses.repositories.*;
+import com.daniil.courses.role_models.Admin;
+import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
 import com.daniil.courses.services.ManagerService;
@@ -27,7 +30,10 @@ class FinalApplicationTests {
 
     @Autowired
     ItemRepository itemRepository;
-
+    @Autowired
+    ManagerRepository managerRepository;
+    @Autowired
+    AdminRepository adminRepository;
     @Autowired
     AddressRepository addressRepository;
     @Autowired
@@ -139,6 +145,21 @@ class FinalApplicationTests {
             .status(OrderStatus.PaymentAccepted.toString())
             .build();
 
+    Manager manager = Manager.builder()
+            .userName("da")
+            .password("net")
+            .build();
+
+
+    ItemDto itemDto = ItemDto.builder()
+            .name("a")
+            .CPU("s")
+            .description("sdsa")
+            .driverConfiguration("dsa")
+            .releaseDate(new Date())
+            .type("sd")
+            .build();
+
     @Test
     void contextLoads() {
 //айтемы юсер адрес
@@ -210,7 +231,14 @@ class FinalApplicationTests {
     @Test
     void addAddress() {
 
-
     }
 
+    @Test
+    void start() {
+        adminRepository.save(Admin.builder().build());
+        managerRepository.save(manager);
+
+        log.info("{}", managerService.addNewItem(itemDto, 1, BigDecimal.valueOf(21312.2312), true));
+
+    }
 }
