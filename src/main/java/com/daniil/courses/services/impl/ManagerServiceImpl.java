@@ -1,7 +1,7 @@
 package com.daniil.courses.services.impl;
 
 import com.daniil.courses.dto.ItemDto;
-import com.daniil.courses.dto.StoreItemDto;
+import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.models.Item;
@@ -32,15 +32,15 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public StoreItemDto addNewItem(ItemDto ItemDto, Integer managerId, BigDecimal price, boolean available) {
+    public ManagerStoreItemDto addNewItem(ItemDto itemDto, Integer managerId, BigDecimal price, boolean available) {
 
         Item item = Item.builder()
-                .name(ItemDto.getName())
-                .description(ItemDto.getDescription())
-                .type(ItemDto.getType())
-                .driverConfiguration(ItemDto.getDriverConfiguration())
-                .CPU(ItemDto.getCPU())
-                .releaseDate(ItemDto.getReleaseDate())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .type(itemDto.getType())
+                .driverConfiguration(itemDto.getDriverConfiguration())
+                .CPU(itemDto.getCPU())
+                .releaseDate(itemDto.getReleaseDate())
                 .build();
 
         StoreItem storeItem = StoreItem.builder()
@@ -53,8 +53,9 @@ public class ManagerServiceImpl implements ManagerService {
         itemRepository.save(item);
         storeItemRepository.save(storeItem);
 
-        return (StoreItemDto) storeItemRepository.findById(storeItem.getId()).stream()
-                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice()));
+        return storeItemRepository.findById(storeItem.getId()).stream()
+                .map(storeItem1 -> new ManagerStoreItemDto(itemDto, storeItem1.getPrice(), storeItem1.isAvailable())).findFirst().orElseThrow();
+
     }
 
     @Override
@@ -66,17 +67,26 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public List<StoreItemDto> viewAllStoreItems() {
+    public List<ManagerStoreItemDto> viewAllStoreItems() {
         return storeItemRepository.findAll().stream()
-                .map(storeItem -> new StoreItemDto(storeItem.getItem(), storeItem.getPrice()))
+                .map(storeItem -> new ManagerStoreItemDto(ItemDto.builder()
+                        .name(storeItem.getItem().getName())
+                        .description(storeItem.getItem().getDescription())
+                        .type(storeItem.getItem().getType())
+                        .driverConfiguration(storeItem.getItem().getDriverConfiguration())
+                        .CPU(storeItem.getItem().getCPU())
+                        .releaseDate(storeItem.getItem().getReleaseDate())
+                        .build(),
+                        storeItem.getPrice(),
+                        storeItem.isAvailable()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public StoreItemDto refactorStoreItem(Integer storeItemId, ItemDto itemDto, Integer managerId, BigDecimal price, boolean available) {
+    public ManagerStoreItemDto refactorStoreItem(Integer storeItemId, ItemDto itemDto, Integer managerId, BigDecimal price, boolean available) {
 
         StoreItem refactorStoreItem = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("Store item is not found"));
-
+        managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
 //        Item item = Item.builder()
 //                .name(itemDto.getName())
 //                .description(itemDto.getDescription())
@@ -86,24 +96,26 @@ public class ManagerServiceImpl implements ManagerService {
 //                .releaseDate(itemDto.getReleaseDate())
 //                .build();
 
-        refactorStoreItem.setItem(Item.builder()
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .type(itemDto.getType())
-                .driverConfiguration(itemDto.getDriverConfiguration())
-                .CPU(itemDto.getCPU())
-                .releaseDate(itemDto.getReleaseDate())
-                .build());
+        Item findItem = itemRepository.findById(storeItemRepository.findById(storeItemId).get().getItem().getId()).orElseThrow();
+
+        findItem.setCPU(itemDto.getCPU());
+        findItem.setType(itemDto.getType());
+        findItem.setReleaseDate(itemDto.getReleaseDate());
+        findItem.setDescription(itemDto.getDescription());
+        findItem.setDriverConfiguration(itemDto.getDriverConfiguration());
+        findItem.setName(itemDto.getName());
+
+        itemRepository.save(findItem);
+
+        refactorStoreItem.setItem(findItem);
         refactorStoreItem.setPrice(price);
         refactorStoreItem.setAvailable(available);
-        refactorStoreItem.setManager(managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found")));
+        refactorStoreItem.setManager(managerRepository.findById(managerId).orElseThrow());
 
-        Item findItem = itemRepository.findById(refactorStoreItem.getItem().getId()).orElseThrow();
-        findItem.setCPU(itemDto.getCPU());//и тд
-        //itemRepository.save(findItem);// refactorStoreItem.getItem().getId()//TODO тут поиграй надо сейвить этот айтем или он сам гений(типо по айди найди и засейви айтем)
+
         storeItemRepository.save(refactorStoreItem);
 
-        return (StoreItemDto) storeItemRepository.findById(refactorStoreItem.getId()).stream()
-                .map(storeItem1 -> new StoreItemDto(storeItem1.getItem(), storeItem1.getPrice()));
+        return storeItemRepository.findById(refactorStoreItem.getId()).stream()
+                .map(storeItem1 -> new ManagerStoreItemDto(itemDto, storeItem1.getPrice(),storeItem1.isAvailable())).findFirst().orElseThrow();
     }
 }

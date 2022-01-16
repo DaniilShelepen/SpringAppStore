@@ -1,15 +1,7 @@
 package com.daniil.courses.controller;
 
-import com.daniil.courses.dto.AddressDto;
-import com.daniil.courses.dto.BasketDto;
-import com.daniil.courses.dto.StoreItemDto;
-import com.daniil.courses.dto.UserDto;
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.dto.*;
 import com.daniil.courses.models.UserOrder;
-import com.daniil.courses.role_models.User;
-import com.daniil.courses.services.FilterService;
-import com.daniil.courses.services.ManagerService;
 import com.daniil.courses.services.UserService;
 
 import java.util.List;
@@ -27,7 +19,7 @@ public class UserController {
 
     @GetMapping("storeItems")
     @Operation(description = "Вывод всех доступных товаров")
-    public List<StoreItemDto> getAvailableShopItems() {
+    public List<UserStoreItemDto> getAvailableShopItems() {
         return userService.viewAvailableItems();
     }
 
@@ -61,10 +53,10 @@ public class UserController {
         return userService.getBasketByUser(userId);
     }
 
-    @PostMapping("{userId}/{count}/addToBasket")
+    @PostMapping("{userId}/{count}/addToBasket/{storeItemId}")
     @Operation(description = "Добавить товар в корзину")
-    public void addToBasket(@RequestBody StoreItemDto storeItemDto, @PathVariable Integer count, @PathVariable Integer userId) {
-        userService.addItemToBasketByUser(storeItemDto, userId, count);
+    public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, @PathVariable Integer userId) {
+        userService.addItemToBasketByUser(storeItemId, userId, count);
     }
 
     @DeleteMapping("{userId}/{storeItemId}/refactorAddress")

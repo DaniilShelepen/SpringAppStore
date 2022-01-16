@@ -1,14 +1,7 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.dto.AddressDto;
-import com.daniil.courses.dto.BasketDto;
-import com.daniil.courses.dto.StoreItemDto;
-import com.daniil.courses.dto.UserDto;
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.dto.*;
 import com.daniil.courses.models.UserOrder;
-import com.daniil.courses.role_models.User;
 
 import java.util.List;
 
@@ -41,7 +34,7 @@ public interface UserService {
     /**
      * добавить товар в корзину
      */
-    void addItemToBasketByUser(StoreItemDto storeItemDto, Integer userId, Integer count);
+    void addItemToBasketByUser(Integer storeItemId, Integer userId, Integer count);
 
     /**
      * удалить товар из корзины
@@ -56,7 +49,7 @@ public interface UserService {
     /**
      * получить все доступные товары
      */
-    List<StoreItemDto> viewAvailableItems();
+    List<UserStoreItemDto> viewAvailableItems();
 
     /**
      * купить товар

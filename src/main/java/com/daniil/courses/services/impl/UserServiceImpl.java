@@ -1,16 +1,11 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.dto.AddressDto;
-import com.daniil.courses.dto.BasketDto;
-import com.daniil.courses.dto.StoreItemDto;
-import com.daniil.courses.dto.UserDto;
+import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.AddressIsNotFound;
+import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserAlreadyExist;
 import com.daniil.courses.exceptions.UserNotFound;
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Basket;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.models.UserOrder;
+import com.daniil.courses.models.*;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.UserService;
@@ -44,6 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<AddressDto> getAllAddressesByUser(Integer userId) {
+
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found"));
+
         return addressRepository.findByUserIdAndVisible(userId, true).stream()
                 .map(address -> new AddressDto(address.getBase(),
                         address.getCity(), address.getEntrance(),
@@ -52,6 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void removeAddressByUser(Integer addressId, Integer userId) {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found"));
         Address removeAddress = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
         if (removeAddress != null) {
             removeAddress.setVisible(false);
@@ -92,27 +91,28 @@ public class UserServiceImpl implements UserService {
         changedAddress.setFloor(addressDto.getFloor());
         changedAddress.setEntrance(addressDto.getEntrance());
 
+        addressRepository.save(changedAddress);
         return addressDto;
     }
 
     @Override
     public List<BasketDto> getBasketByUser(Integer userId) {
         return basketRepository.findBasketByUserId(userId).stream()
-                .map(basket -> new BasketDto(basket.getStoreItem(), basket.getCount(), basket.getPrice()))
+                .map(basket -> new BasketDto(ItemDto.toItemDto(basket.getStoreItem().getItem())
+                        , basket.getCount(), basket.getPrice()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void addItemToBasketByUser(StoreItemDto storeItemDto, Integer userId, Integer count) {
+    public void addItemToBasketByUser(Integer storeItemId, Integer userId, Integer count) {
+
+        StoreItem storeItem = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("store item is not found"));
+
         basketRepository.save(Basket.builder()
                 .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found")))
-                .storeItem(StoreItem.builder()
-                        .item(storeItemDto.getItem())
-                        .price(storeItemDto.getPrice())
-                        .available(true)
-                        .build())
+                .storeItem(storeItem)
                 .count(count)
-                .price(storeItemDto.getPrice().multiply(BigDecimal.valueOf(count)))
+                .price(storeItem.getPrice().multiply(BigDecimal.valueOf(count)))
                 .build()
         );
     }
@@ -128,10 +128,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<StoreItemDto> viewAvailableItems() {
+    public List<UserStoreItemDto> viewAvailableItems() {
         return storeItemRepository.findAll().stream()
                 .filter(StoreItem::isAvailable)
-                .map(storeItem -> new StoreItemDto(storeItem.getItem(), storeItem.getPrice()))
+                .map(storeItem -> new UserStoreItemDto(ItemDto.builder()
+                        .name(storeItem.getItem().getName())
+                        .description(storeItem.getItem().getDescription())
+                        .type(storeItem.getItem().getType())
+                        .driverConfiguration(storeItem.getItem().getDriverConfiguration())
+                        .CPU(storeItem.getItem().getCPU())
+                        .releaseDate(storeItem.getItem().getReleaseDate())
+                        .build()
+                        , storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
 

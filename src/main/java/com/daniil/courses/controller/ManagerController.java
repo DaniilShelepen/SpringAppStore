@@ -1,7 +1,7 @@
 package com.daniil.courses.controller;
 
 import com.daniil.courses.dto.ItemDto;
-import com.daniil.courses.dto.StoreItemDto;
+import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ import java.util.List;
 public class ManagerController {
     private final ManagerService managerService;
 
-    @PostMapping("{managerId}/createItem")
+    @PostMapping("{managerId}/createItem/{price}/{available}")
     @Operation(description = "Добавление нового товара")
-    public StoreItemDto addNewItem(@RequestBody ItemDto itemDto, @PathVariable Integer managerId, @RequestBody BigDecimal price, @RequestBody boolean available) {
+    public ManagerStoreItemDto addNewItem(@PathVariable Integer managerId, @RequestBody ItemDto itemDto, @PathVariable BigDecimal price, @PathVariable boolean available) {
         return managerService.addNewItem(itemDto, managerId, price, available);
     }
 
@@ -30,12 +30,12 @@ public class ManagerController {
 
     @GetMapping("storeItems")
     @Operation(description = "Получить весь список товаров")
-    public List<StoreItemDto> viewStoreItems() {
+    public List<ManagerStoreItemDto> viewStoreItems() {
         return managerService.viewAllStoreItems();
     }
 
-    @PutMapping("{managerId}/refactorStoreItem/{storeItemId}")
-    public StoreItemDto refactorStoreItem(@PathVariable Integer storeItemId, @RequestBody ItemDto itemDto, @PathVariable Integer managerId, @RequestBody BigDecimal price, @RequestBody boolean available) {
+    @PutMapping("{managerId}/refactorStoreItem/{storeItemId}/{price}/{available}")
+    public ManagerStoreItemDto refactorStoreItem(@PathVariable Integer storeItemId, @RequestBody ItemDto itemDto, @PathVariable Integer managerId, @PathVariable BigDecimal price, @PathVariable boolean available) {
         return managerService.refactorStoreItem(storeItemId, itemDto, managerId, price, available);
     }
 

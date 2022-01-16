@@ -159,6 +159,14 @@ class FinalApplicationTests {
             .releaseDate(new Date())
             .type("sd")
             .build();
+    ItemDto itemDto2 = ItemDto.builder()
+            .name("2")
+            .CPU("s")
+            .description("sdsa")
+            .driverConfiguration("dsa")
+            .releaseDate(new Date())
+            .type("sd")
+            .build();
 
     @Test
     void contextLoads() {
@@ -239,6 +247,8 @@ class FinalApplicationTests {
         managerRepository.save(manager);
 
         log.info("{}", managerService.addNewItem(itemDto, 1, BigDecimal.valueOf(21312.2312), true));
+
+        log.info("{}", managerService.refactorStoreItem(1, itemDto2, 1, BigDecimal.valueOf(15.89), true));
 
     }
 }
