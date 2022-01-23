@@ -1,14 +1,13 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.dto.ItemDto;
-import com.daniil.courses.dto.ManagerStoreItemDto;
+import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
+import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.ItemRepository;
-import com.daniil.courses.repositories.ManagerRepository;
-import com.daniil.courses.repositories.StoreItemRepository;
+import com.daniil.courses.repositories.*;
+import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +22,16 @@ public class ManagerServiceImpl implements ManagerService {
     ItemRepository itemRepository;
     ManagerRepository managerRepository;
     StoreItemRepository storeItemRepository;
+    OrderRepository orderRepository;
+    UserRepository userRepository;
 
     @Autowired
-    public ManagerServiceImpl(ItemRepository itemRepository, StoreItemRepository storeItemRepository, ManagerRepository managerRepository) {
+    public ManagerServiceImpl(ItemRepository itemRepository, UserRepository userRepository, StoreItemRepository storeItemRepository, ManagerRepository managerRepository, OrderRepository orderRepository) {
         this.itemRepository = itemRepository;
         this.storeItemRepository = storeItemRepository;
         this.managerRepository = managerRepository;
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -69,14 +72,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public List<ManagerStoreItemDto> viewAllStoreItems() {
         return storeItemRepository.findAll().stream()
-                .map(storeItem -> new ManagerStoreItemDto(ItemDto.builder()
-                        .name(storeItem.getItem().getName())
-                        .description(storeItem.getItem().getDescription())
-                        .type(storeItem.getItem().getType())
-                        .driverConfiguration(storeItem.getItem().getDriverConfiguration())
-                        .CPU(storeItem.getItem().getCPU())
-                        .releaseDate(storeItem.getItem().getReleaseDate())
-                        .build(),
+                .map(storeItem -> new ManagerStoreItemDto(ItemDto.toItemDto(storeItem.getItem()),
                         storeItem.getPrice(),
                         storeItem.isAvailable()))
                 .collect(Collectors.toList());
@@ -87,14 +83,6 @@ public class ManagerServiceImpl implements ManagerService {
 
         StoreItem refactorStoreItem = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("Store item is not found"));
         managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
-//        Item item = Item.builder()
-//                .name(itemDto.getName())
-//                .description(itemDto.getDescription())
-//                .type(itemDto.getType())
-//                .driverConfiguration(itemDto.getDriverConfiguration())
-//                .CPU(itemDto.getCPU())
-//                .releaseDate(itemDto.getReleaseDate())
-//                .build();
 
         Item findItem = itemRepository.findById(storeItemRepository.findById(storeItemId).get().getItem().getId()).orElseThrow();
 
@@ -116,6 +104,17 @@ public class ManagerServiceImpl implements ManagerService {
         storeItemRepository.save(refactorStoreItem);
 
         return storeItemRepository.findById(refactorStoreItem.getId()).stream()
-                .map(storeItem1 -> new ManagerStoreItemDto(itemDto, storeItem1.getPrice(),storeItem1.isAvailable())).findFirst().orElseThrow();
+                .map(storeItem1 -> new ManagerStoreItemDto(itemDto, storeItem1.getPrice(), storeItem1.isAvailable())).findFirst().orElseThrow();
+    }
+
+    @Override
+    public List<ManagerOrderDto> getAllUserOrders(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found"));
+        return orderRepository.findAllByUser(user).stream()
+                .map(order -> new ManagerOrderDto(order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
+                        UserDto.toUserDto(order.getUser()), AddressDto.toAddressDto(order.getAddress()),order.getExternalId(),
+                        order.getStoreItem().stream()
+                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 }

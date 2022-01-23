@@ -8,12 +8,13 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
 public class ItemDto {
     protected String name;
     protected String description;
@@ -22,8 +23,8 @@ public class ItemDto {
     protected String CPU;
 
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    protected Date releaseDate;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    protected LocalDate releaseDate;
 
 
     public static ItemDto toItemDto(Item item) {

@@ -1,37 +1,31 @@
-package com.daniil.courses.models;
+package com.daniil.courses.dto;
 
-import com.daniil.courses.role_models.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
-@Entity(name = "order_entity")
+@Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class ManagerOrderDto {
+    @NotBlank
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate dateOfRefactoring;
     protected BigDecimal price;
+    protected UserDto user;
+    protected AddressDto address;
     protected String externalId;
-    @ManyToOne
-    protected Address address;
-    @ManyToOne(fetch = FetchType.EAGER)
-    protected User user;
-    @ManyToMany(fetch = FetchType.EAGER)
-    List<StoreItem> storeItem;
+    protected List<String> items;
+
+
 }

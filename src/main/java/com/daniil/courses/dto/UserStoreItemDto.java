@@ -8,9 +8,9 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 
 @Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
 public class UserStoreItemDto {
     protected ItemDto itemDto;
     protected BigDecimal price;

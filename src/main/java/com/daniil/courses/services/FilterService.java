@@ -1,31 +1,29 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.models.Item;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.models.UserOrder;
+import com.daniil.courses.dto.UserStoreItemDto;
+import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.role_models.User;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface FilterService {
 
 
-    List<StoreItem> getAllItemsWithType(String type);
+    List<UserStoreItemDto> getAllItemsWithType(String type);
 
-    List<StoreItem> getAllItemsWithDriverConfiguration(String configuration);
+    List<UserStoreItemDto> getAllItemsWithDriverConfiguration(String configuration);
 
-    List<StoreItem> getAllItemsWithCPU(String CPU);
+    List<UserStoreItemDto> getAllItemsWithCPU(String CPU);
 
 
-    List<StoreItem> getAllWithReleaseDate(Date date);//с этого момента и дальше
+    List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date);//с этого момента и дальше
 
-    List<UserOrder> filterUserOrderByStatus(User user, OrderStatus ... orderStatuses);
+    List<UserOrderDto> filterUserOrderByStatus(User user, OrderStatus ... orderStatuses);
 
-    List<UserOrder> filterUserOrderByDateNew(User user);
+    List<UserOrderDto> filterUserOrderByDateNew(User user);
 
-    List<UserOrder> filterUserOrderByDateOld(User user);
+    List<UserOrderDto> filterUserOrderByDateOld(User user);
 
 }

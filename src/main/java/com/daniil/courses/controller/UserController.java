@@ -1,7 +1,8 @@
 package com.daniil.courses.controller;
 
+import com.daniil.courses.bankApi.PaymentRequest;
 import com.daniil.courses.dto.*;
-import com.daniil.courses.models.UserOrder;
+import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.services.UserService;
 
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
+
+import javax.persistence.criteria.CriteriaBuilder;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/users/")
@@ -74,9 +77,15 @@ public class UserController {
 //    /** купить товар */
 //    void buyItems(Integer... id);//TODO
 
+    @GetMapping("{userId}/byeItems/{addressId}")
+    public PaymentRequest byeItems(@PathVariable Integer addressId, @PathVariable Integer userId){
+        return userService.buyItems(userId,addressId);
+    }
+
+
     @GetMapping("{userId}/Orders")
     @Operation(description = "Получить все заказы")
-    public List<UserOrder> getAllOrders(@PathVariable Integer userId) {
+    public List<UserOrderDto> getAllOrders(@PathVariable Integer userId) {
         return userService.getAllOrdersByUser(userId);
     }
 

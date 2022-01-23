@@ -1,12 +1,15 @@
 package com.daniil.courses.dto;
 
-import com.daniil.courses.role_models.User;
+import com.daniil.courses.models.Address;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.persistence.*;
-import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddressDto {
 
     protected String city;
@@ -17,12 +20,8 @@ public class AddressDto {
     protected String entrance;
 
 
-    public AddressDto(String base, String city, String entrance, String flat, String floor, String street) {
-        this.base = base;
-        this.city = city;
-        this.entrance = entrance;
-        this.flat = flat;
-        this.floor = floor;
-        this.street = street;
-    }
+  public static AddressDto toAddressDto(Address address){
+      return new AddressDto(address.getCity(), address.getStreet(), address.getBase(),
+              address.getFlat(), address.getFloor(), address.getEntrance());
+  }
 }

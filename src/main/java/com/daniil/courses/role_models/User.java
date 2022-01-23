@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class User {
     // @Pattern(value = "^1([345789])\\d{9}$")
     @NotBlank(message = "Номер телефона не может быть пустым")
     protected String phoneNumber;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    protected Date birthday;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    protected LocalDate birthday;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

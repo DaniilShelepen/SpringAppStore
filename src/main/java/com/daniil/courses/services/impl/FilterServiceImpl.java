@@ -1,8 +1,9 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dto.ItemDto;
+import com.daniil.courses.dto.UserStoreItemDto;
 import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.models.UserOrder;
+import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.repositories.OrderRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.role_models.User;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,36 +32,40 @@ public class FilterServiceImpl implements FilterService {
 
 
     @Override
-    public List<StoreItem> getAllItemsWithType(String type) {
+    public List<UserStoreItemDto> getAllItemsWithType(String type) {
         return storeItemRepository.findAll().stream()
                 .filter(storeItem -> storeItem.getItem().getType().equals(type))
+                .map(storeItem -> new UserStoreItemDto(ItemDto.toItemDto(storeItem.getItem()),storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<StoreItem> getAllItemsWithDriverConfiguration(String configuration) {
+    public List<UserStoreItemDto> getAllItemsWithDriverConfiguration(String configuration) {
         return storeItemRepository.findAll().stream()
                 .filter(storeItem -> storeItem.getItem().getDriverConfiguration().equals(configuration))
+                .map(storeItem -> new UserStoreItemDto(ItemDto.toItemDto(storeItem.getItem()),storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<StoreItem> getAllItemsWithCPU(String CPU) {
+    public List<UserStoreItemDto> getAllItemsWithCPU(String CPU) {
         return storeItemRepository.findAll().stream()
                 .filter(storeItem -> storeItem.getItem().getCPU().equals(CPU))
+                .map(storeItem -> new UserStoreItemDto(ItemDto.toItemDto(storeItem.getItem()),storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
 
 
     @Override
-    public List<StoreItem> getAllWithReleaseDate(Date date) {
+    public List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date) {
         return storeItemRepository.findAll().stream()
                 .filter(storeItem -> storeItem.getItem().getReleaseDate().compareTo(date) > 0)
+                .map(storeItem -> new UserStoreItemDto(ItemDto.toItemDto(storeItem.getItem()),storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<UserOrder> filterUserOrderByStatus(User user, OrderStatus... orderStatuses) {
+    public List<UserOrderDto> filterUserOrderByStatus(User user, OrderStatus... orderStatuses) {
 
 
         boolean a = orderRepository.findAllByUserId(user.getId()).stream().anyMatch(
@@ -69,17 +75,23 @@ public class FilterServiceImpl implements FilterService {
 
         return orderRepository.findAllByUserId(user.getId()).stream()
                 .filter(order -> order.getStatus().contains(Arrays.toString(orderStatuses)))
-                .map(order -> new UserOrder(order.getStatus(), order.getDate(), order.getDateOfRefactoring()))
+                .map(order -> new UserOrderDto(order.getStatus(), order.getDate(), order.getDateOfRefactoring(),order.getPrice(),
+                        order.getStoreItem().stream()
+                                .map(storeItem -> storeItem.getItem().getName())
+                                .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<UserOrder> filterUserOrderByDateNew(User user) {
+    public List<UserOrderDto> filterUserOrderByDateNew(User user) {
 
-        List<UserOrder> finalList =
+        List<UserOrderDto> finalList =
                 orderRepository.findAllByUserId(user.getId()).stream()
                         .sorted(Comparator.comparing(Order::getDate))
-                        .map(order -> new UserOrder(order.getStatus(), order.getDate(), order.getDateOfRefactoring()))
+                        .map(order -> new UserOrderDto(order.getStatus(), order.getDate(), order.getDateOfRefactoring(),order.getPrice(),
+                                order.getStoreItem().stream()
+                                        .map(storeItem -> storeItem.getItem().getName())
+                                        .collect(Collectors.toList())))
                         .collect(Collectors.toList());
         Collections.reverse(finalList);
         return finalList;
@@ -87,10 +99,13 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
-    public List<UserOrder> filterUserOrderByDateOld(User user) {
+    public List<UserOrderDto> filterUserOrderByDateOld(User user) {
         return orderRepository.findAllByUserId(user.getId()).stream()
                 .sorted(Comparator.comparing(Order::getDate))
-                .map(order -> new UserOrder(order.getStatus(), order.getDate(), order.getDateOfRefactoring()))
+                .map(order -> new UserOrderDto(order.getStatus(), order.getDate(), order.getDateOfRefactoring(),order.getPrice(),
+                        order.getStoreItem().stream()
+                                .map(storeItem -> storeItem.getItem().getName())
+                                .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 }

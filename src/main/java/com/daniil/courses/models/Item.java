@@ -6,6 +6,8 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -27,8 +29,8 @@ public class Item {
     protected String CPU;
 
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    protected Date releaseDate;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    protected LocalDate releaseDate;
 
 
 }

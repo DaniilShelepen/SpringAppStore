@@ -1,7 +1,10 @@
 package com.daniil.courses;
 
 import com.daniil.courses.dto.ItemDto;
-import com.daniil.courses.models.*;
+import com.daniil.courses.models.Address;
+import com.daniil.courses.models.Item;
+import com.daniil.courses.models.Order;
+import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.Admin;
 import com.daniil.courses.role_models.Manager;
@@ -11,20 +14,31 @@ import com.daniil.courses.services.ManagerService;
 import com.daniil.courses.services.OrderStatus;
 import com.daniil.courses.services.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+
 @Slf4j
 @EnableTransactionManagement
 @SpringBootTest(classes = FinalApplication.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(PER_CLASS)
 class FinalApplicationTests {
 
 
@@ -53,18 +67,18 @@ class FinalApplicationTests {
     FilterService filterService;
 
     private static final Item item1 = new Item(null, "MacOs", "good very mathafaka",
-            "PC", "SSD 1024", "A93", new Date(1_565_568_000_000L));
+            "PC", "SSD 1024", "A93", LocalDate.of(2002, 3, 15));
 
     private static final Item item2 = new Item(null, "Iphone 11", "mb moy",
-            "phone", "256GB", "A13", new Date(1_565_168_000_000L));
+            "phone", "256GB", "A13", LocalDate.of(2002, 3, 15));
     private static final Item item3 = new Item(null, "AirPods", "birushi",
-            "headPhones", "nun", "A3", new Date(1_563_568_000_000L));
+            "headPhones", "nun", "A3", LocalDate.of(2002, 3, 15));
 
 
     private static final User ME = User.builder()
             .name("Daniil")
             .surname("aaa212aa")
-            .birthday(new Date(56132131L))
+            .birthday(LocalDate.of(2002, 3, 15))
             .password("123")
             .phoneNumber("+37529234567")
             .build();
@@ -72,7 +86,7 @@ class FinalApplicationTests {
     private static final User NOT_ME = User.builder()
             .name("Daniil12")
             .surname("aaaaa")
-            .birthday(new Date(123132131L))
+            .birthday(LocalDate.of(2002, 3, 15))
             .password("12345")
             .phoneNumber("+3752555567")
             .build();
@@ -124,24 +138,24 @@ class FinalApplicationTests {
     Order order = Order.builder()
             .address(newAddress)
             .user(ME)
-            .date(new Date(123_442_67L))
-            .dateOfRefactoring(new Date(123_442_67L))
+            .date(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
             .status(OrderStatus.PaymentAccepted.toString())
             .build();
 
     Order order1 = Order.builder()
             .address(newAddress)
             .user(ME)
-            .date(new Date(123432_3332_442_67L))
-            .dateOfRefactoring(new Date(123_442_67L))
+            .date(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
             .status(OrderStatus.AwaitingConfirmationOfPayment.toString())
             .build();
 
     Order order2 = Order.builder()
             .address(newAddress)
             .user(ME)
-            .date(new Date(123_14_67L))
-            .dateOfRefactoring(new Date(123_442_67L))
+            .date(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
             .status(OrderStatus.PaymentAccepted.toString())
             .build();
 
@@ -152,23 +166,24 @@ class FinalApplicationTests {
 
 
     ItemDto itemDto = ItemDto.builder()
-            .name("a")
-            .CPU("s")
+            .name("aasd")
+            .CPU("sdsad")
             .description("sdsa")
             .driverConfiguration("dsa")
-            .releaseDate(new Date())
-            .type("sd")
+            .releaseDate(LocalDate.of(2002, 3, 15))
+            .type("sdsda")
             .build();
     ItemDto itemDto2 = ItemDto.builder()
             .name("2")
             .CPU("s")
             .description("sdsa")
             .driverConfiguration("dsa")
-            .releaseDate(new Date())
+            .releaseDate(LocalDate.of(2002, 3, 15))
             .type("sd")
             .build();
 
     @Test
+    @org.junit.jupiter.api.Order(1)
     void contextLoads() {
 //айтемы юсер адрес
 
@@ -194,61 +209,45 @@ class FinalApplicationTests {
         userRepository.save(ME);
         userRepository.save(NOT_ME);
 
-//        userService.addAddressByUser(ME.getId(), newAddress);
-//        userService.addAddressByUser(ME.getId(), not_newAddress1);
-//
-//        userService.addAddressByUser(NOT_ME.getId(), not_newAddress);
-
-
-        orderRepository.save(order);
-        orderRepository.save(order1);
-        orderRepository.save(order2);
-
-        log.info("{}", filterService.filterUserOrderByStatus(ME, OrderStatus.PaymentAccepted, OrderStatus.AwaitingConfirmationOfPayment));//TODO
-        // log.info("{}", userService.getAllAddressesByUser(ME.getId()));
-
-
-//        userService.addItemToBasketByUser(storeItems.get(2), ME.getId(), 5);
-//        userService.addItemToBasketByUser(storeItems.get(0), ME.getId(), 4);
-//        userService.addItemToBasketByUser(storeItems.get(1), ME.getId(), 3);
-//        userService.addItemToBasketByUser(storeItems.get(2), NOT_ME.getId(), 5);
-
-//        orderRepository.save(Order.builder()
-//                .status("DONE")
-//                .address(newAddress)
-//                .user(ME)
-//                .date(new Date(1_565_568_000_032L))
-//                .dateOfRefactoring(new Date(1_565_568_000_084L))
-//                .price(BigDecimal.valueOf(21321))
-//                .build());
-        // log.info("{}", userService.getAllOrdersByUser(ME));
-        //   log.info(String.valueOf(userService.getUserBasket(ME)));
-
-        // userService.removeFromBasketByUser(storeItems.get(2), ME.getId());
-        //userService.clearBasketByUser(ME.getId());
-
-//        managerService.addNewItem("item", "norm", "da", "nu norm takoe",
-//                "cpu da", new Date(1_213_3333_2345L), BigDecimal.valueOf(1242.77), true);
-//
-//        managerService.setAvailable(storeItemRepository.findById(2).orElse(storeItems.get(1)), false);
-//        log.info("{}", managerService.viewAllStoreItems());
-        //userService.removeAddressByUser(newAddress, ME.getId());
-        // userService.refactorAddressByUser(newAddress, ME.getId());
-    }
-
-    @Test
-    void addAddress() {
 
     }
+
 
     @Test
     void start() {
+
+
         adminRepository.save(Admin.builder().build());
         managerRepository.save(manager);
 
-        log.info("{}", managerService.addNewItem(itemDto, 1, BigDecimal.valueOf(21312.2312), true));
 
-        log.info("{}", managerService.refactorStoreItem(1, itemDto2, 1, BigDecimal.valueOf(15.89), true));
+       RestTemplate restTemplate = new RestTemplate();
+
+        /** типо покупаем **/
+
+        HttpHeaders headers3 = new HttpHeaders();
+        headers3.setContentType(MediaType.APPLICATION_JSON);
+        headers3.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        headers3.set("api-secret", "73639230209630325687467956934678461280299897415334906606780485480290810227978544877781597859779756768343265126280119675915116");
+
+        String url3 = "http://localhost:7070/external-api/acquires/7edfc44d-f7d5-411a-8516-33f27d039d86/payments";
+        String requestJson3 = "{\n" +
+                "    \"accountId\": \"270ec18e-995f-4e4e-a5d3-7eee647f79f7\",\n" +
+                "    \"amount\": {\n" +
+                "        \"currency\": \"USD\",\n" +
+                "        \"value\": 150.14\n" +
+                "    },\n" +
+                "    \"externalId\": \"xa3aa3449-925e-4dd0-9786-a726067896263\",\n" +
+                "    \"purpose\": \"labore ut veniam sunt commodo\",\n" +
+                "    \"acquireWebHook\": \"http://CUcff.chhVKLaxPnKbT\"\n" +
+                "}";
+
+
+        HttpEntity<String> entity3 = new HttpEntity<>(requestJson3, headers3);
+        log.warn("{}", restTemplate.postForObject(url3, entity3, String.class));
 
     }
+
+
 }

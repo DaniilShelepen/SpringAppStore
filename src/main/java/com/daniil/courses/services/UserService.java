@@ -1,7 +1,8 @@
 package com.daniil.courses.services;
 
+import com.daniil.courses.bankApi.PaymentRequest;
 import com.daniil.courses.dto.*;
-import com.daniil.courses.models.UserOrder;
+import com.daniil.courses.dto.UserOrderDto;
 
 import java.util.List;
 
@@ -54,12 +55,12 @@ public interface UserService {
     /**
      * купить товар
      */
-    void buyItems(Integer... id);
+    PaymentRequest buyItems(Integer userId, Integer addressId);
 
     /**
      * получить все заказы
      */
-    List<UserOrder> getAllOrdersByUser(Integer userId);
+    List<UserOrderDto> getAllOrdersByUser(Integer userId);
 
     /**
      * создание юзера

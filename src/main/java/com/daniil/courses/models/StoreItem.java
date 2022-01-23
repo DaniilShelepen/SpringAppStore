@@ -6,7 +6,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,7 +16,6 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Data
 public class StoreItem {
     protected BigDecimal price;
@@ -27,4 +28,5 @@ public class StoreItem {
     @ManyToOne
     @JoinColumn(name = "refactor_by")
     private Manager manager;
+
 }
