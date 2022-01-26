@@ -1,6 +1,6 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.bankApi.PaymentRequest;
+import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.dto.*;
 import com.daniil.courses.dto.UserOrderDto;
 

@@ -16,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
+    protected Integer id;
     protected String name;
     protected String description;
     protected String type;
@@ -28,6 +29,6 @@ public class ItemDto {
 
 
     public static ItemDto toItemDto(Item item) {
-        return new ItemDto(item.getName(), item.getDescription(), item.getType(), item.getDriverConfiguration(), item.getCPU(), item.getReleaseDate());
+        return new ItemDto(item.getId(),item.getName(), item.getDescription(), item.getType(), item.getDriverConfiguration(), item.getCPU(), item.getReleaseDate());
     }
 }

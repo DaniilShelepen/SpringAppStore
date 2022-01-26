@@ -1,14 +1,17 @@
 package com.daniil.courses.models;
 
+import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -34,4 +37,7 @@ public class Order {
     protected User user;
     @ManyToMany(fetch = FetchType.EAGER)
     List<StoreItem> storeItem;
+    @ManyToOne
+    @JoinColumn(name = "refactor_by")
+    private Manager manager;
 }

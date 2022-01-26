@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDto {
-
+    protected Integer id;
     protected String city;
     protected String street;
     protected String base;
@@ -20,8 +20,8 @@ public class AddressDto {
     protected String entrance;
 
 
-  public static AddressDto toAddressDto(Address address){
-      return new AddressDto(address.getCity(), address.getStreet(), address.getBase(),
-              address.getFlat(), address.getFloor(), address.getEntrance());
-  }
+    public static AddressDto toAddressDto(Address address) {
+        return new AddressDto(address.getId(),address.getCity(), address.getStreet(), address.getBase(),
+                address.getFlat(), address.getFloor(), address.getEntrance());
+    }
 }

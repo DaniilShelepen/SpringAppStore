@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserOrderDto {
+    protected Integer id;
     @NotBlank
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")

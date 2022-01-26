@@ -1,14 +1,17 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.bankApi.PaymentRequest;
 import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.*;
-import com.daniil.courses.models.*;
+import com.daniil.courses.models.Address;
+import com.daniil.courses.models.Basket;
+import com.daniil.courses.models.Order;
+import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,7 +26,6 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class UserServiceImpl implements UserService {
 
 
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found"));
 
         return addressRepository.findByUserIdAndVisible(userId, true).stream()
-                .map(address -> new AddressDto(address.getBase(),
+                .map(address -> new AddressDto(address.getId(), address.getBase(),
                         address.getCity(), address.getEntrance(),
                         address.getFlat(), address.getFloor(),
                         address.getStreet())).collect(Collectors.toList());
@@ -143,14 +145,27 @@ public class UserServiceImpl implements UserService {
     public List<UserStoreItemDto> viewAvailableItems() {
         return storeItemRepository.findAll().stream()
                 .filter(StoreItem::isAvailable)
-                .map(storeItem -> new UserStoreItemDto(ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
+
+
+    @Value("${headers.api.secret}")
+    String apiSecret;
+    @Value("${bank.url}")
+    String bankUrl;
+    @Value("${bank.account}")
+    String bankAccount;
+    @Value("${controller.url}")
+    String controllerUrl;
+
 
     @Override
     public PaymentRequest buyItems(Integer userId, Integer addressId) {
         basketRepository.findAllByUserId(userId).stream().findAny().orElseThrow(() -> new BasketIsEmpty("Your basket is empty"));
-
+        Address address = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
+        if (address == null)
+            throw new AddressIsNotFound("Address is not found");
         List<Basket> basketList = basketRepository.findAllByUserId(userId);
         BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basket -> Double.parseDouble(basket.getPrice().toString())).sum());
 
@@ -159,57 +174,45 @@ public class UserServiceImpl implements UserService {
 
         String externalId = getRandomString();
 
-
         orderRepository.save(Order.builder()
                 .externalId(externalId)
                 .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found")))
                 .storeItem(storeItems)
-                .address(addressRepository.findById(addressId).orElseThrow(() -> new AddressIsNotFound("Address is not found")))
+                .address(address)
                 .date(LocalDate.now())
                 .dateOfRefactoring(LocalDate.now())
                 .price(price)
+                .status("Ожидает подтверждения платежа")
                 .build());
 
         clearBasketByUser(userId);
-
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.set("api-secret", apiSecret);
 
-        headers.set("api-secret", "73639230209630325687467956934678461280299897415334906606780485480290810227978544877781597859779756768343265126280119675915116");
-//конфиг
-        String url = "http://localhost:7070/external-api/acquires/7edfc44d-f7d5-411a-8516-33f27d039d86/payments";
         String requestJson = "{\n" +
-                "    \"accountId\": \"270ec18e-995f-4e4e-a5d3-7eee647f79f7\",\n" +
+                "    \"accountId\": \"" + bankAccount + "\",\n" +
                 "    \"amount\": {\n" +
                 "        \"currency\": \"USD\",\n" +
                 "        \"value\": " + price + "\n" +
                 "    },\n" +
                 "    \"externalId\": \"" + externalId + "\",\n" +
-                "    \"purpose\": \"Покупка товара\",\n" +
-                "    \"acquireWebHook\": \"http://localhost:8080/api/bank/getanswer\"\n" +
+                "    \"purpose\": \"Payment\",\n" +
+                "    \"acquireWebHook\": \"" + controllerUrl + "\"\n" +
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
-
-        //создай тут ордер а потом в последней ордер в бд поставь в статус
-
-
-        return restTemplate.postForObject(url, entity, PaymentRequest.class);
-
-
-        //clearBasketByUser(userId);
-
-
+        return restTemplate.postForObject(bankUrl, entity, PaymentRequest.class);
     }
 
     @Override
     public List<UserOrderDto> getAllOrdersByUser(Integer userId) {
         return orderRepository.findAllByUserId(userId).stream()
-                .map(order -> new UserOrderDto(order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
+                .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
                         order.getStoreItem().stream()
                                 .map(storeItem -> storeItem.getItem().getName())
                                 .collect(Collectors.toList())
@@ -222,6 +225,7 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.findByPhoneNumber(userdto.getPhoneNumber()) != null)
             throw new UserAlreadyExist("User with this phone number already exist!");
+
 
         userRepository.save(User.builder()
                 .name(userdto.getName())

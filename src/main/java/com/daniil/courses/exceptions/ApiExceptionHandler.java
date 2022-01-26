@@ -84,4 +84,15 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException,serverError);
     }
 
+    @ExceptionHandler({ManagerIsAlreadyExists.class})
+    public ResponseEntity<Object> handlerManagerIsAlreadyExists(ManagerIsAlreadyExists exception) {
+        HttpStatus serverError = HttpStatus.INTERNAL_SERVER_ERROR;
+        ApiException apiException = new ApiException(
+                exception.getMessage(),
+                exception,
+                serverError,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+        return new ResponseEntity<>(apiException, serverError);
+    }
 }

@@ -20,10 +20,10 @@ public interface FilterService {
 
     List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date);//с этого момента и дальше
 
-    List<UserOrderDto> filterUserOrderByStatus(User user, OrderStatus ... orderStatuses);
+    List<UserOrderDto> filterUserOrderByStatus(Integer userId,  String orderStatuses);
 
-    List<UserOrderDto> filterUserOrderByDateNew(User user);
+    List<UserOrderDto> filterUserOrderByDateNew(Integer userId);
 
-    List<UserOrderDto> filterUserOrderByDateOld(User user);
+    List<UserOrderDto> filterUserOrderByDateOld(Integer userId);
 
 }

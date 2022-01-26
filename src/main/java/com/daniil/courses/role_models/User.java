@@ -28,6 +28,7 @@ public class User {
     protected String phoneNumber;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate birthday;
+    boolean available;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -40,4 +41,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Basket> basket;
+
+
 }

@@ -1,5 +1,6 @@
 package com.daniil.courses.dto;
 
+import com.daniil.courses.role_models.Manager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +13,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ManagerStoreItemDto {
+    protected Integer id;
     protected ItemDto itemDto;
     protected BigDecimal price;
     protected boolean available;
-
+    protected Manager manger;
 
 
 }

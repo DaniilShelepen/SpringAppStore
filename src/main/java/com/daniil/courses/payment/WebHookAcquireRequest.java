@@ -1,4 +1,4 @@
-package com.daniil.courses.bankApi;
+package com.daniil.courses.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

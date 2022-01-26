@@ -1,6 +1,7 @@
 package com.daniil.courses.role_models;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Data
 @Entity
 @SuperBuilder
 @NoArgsConstructor
@@ -18,6 +20,6 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private final String name = "Admin";
+    private final String name = "admin";
     private final String password = "admin";
 }

@@ -7,4 +7,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findByPhoneNumber(String phoneNumber);
 
+    User findByPhoneNumberAndAvailable(String phoneNumber, boolean available);
+
+
 }

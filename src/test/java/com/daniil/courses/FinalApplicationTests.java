@@ -11,7 +11,6 @@ import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
 import com.daniil.courses.services.ManagerService;
-import com.daniil.courses.services.OrderStatus;
 import com.daniil.courses.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.MethodOrderer;
@@ -26,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -140,7 +138,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(LocalDate.of(2002, 3, 15))
-            .status(OrderStatus.PaymentAccepted.toString())
+            .status("AAAA")
             .build();
 
     Order order1 = Order.builder()
@@ -148,7 +146,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(LocalDate.of(2002, 3, 15))
-            .status(OrderStatus.AwaitingConfirmationOfPayment.toString())
+            .status("AAAAAAa")
             .build();
 
     Order order2 = Order.builder()
@@ -156,7 +154,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(LocalDate.of(2002, 3, 15))
-            .status(OrderStatus.PaymentAccepted.toString())
+            .status("AAAA")
             .build();
 
     Manager manager = Manager.builder()

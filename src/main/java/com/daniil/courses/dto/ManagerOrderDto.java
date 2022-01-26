@@ -1,5 +1,6 @@
 package com.daniil.courses.dto;
 
+import com.daniil.courses.role_models.Manager;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ManagerOrderDto {
+    protected Integer id;
     @NotBlank
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
@@ -26,6 +28,7 @@ public class ManagerOrderDto {
     protected AddressDto address;
     protected String externalId;
     protected List<String> items;
+    protected Manager manager;
 
 
 }

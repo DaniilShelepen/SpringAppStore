@@ -1,23 +1,28 @@
 package com.daniil.courses.controller;
 
-import com.daniil.courses.bankApi.PaymentRequest;
+import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.dto.*;
-import com.daniil.courses.dto.UserOrderDto;
+import com.daniil.courses.repositories.AddressRepository;
+import com.daniil.courses.repositories.UserRepository;
+import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.UserService;
-
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import java.security.Principal;
+import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/users/")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
 
 
     @GetMapping("storeItems")
@@ -26,69 +31,74 @@ public class UserController {
         return userService.viewAvailableItems();
     }
 
-    @GetMapping("{userId}/addresses")
+    @GetMapping("addresses")
     @Operation(description = "Получить адреса юзера")
-    public List<AddressDto> getAddresses(@PathVariable Integer userId) {
-        return userService.getAllAddressesByUser(userId);
+    public List<AddressDto> getAddresses(Principal principal) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);//TODO проверь и доделай со всеми
+        return userService.getAllAddressesByUser(user.getId());
     }
 
-    @DeleteMapping("{userId}/removeAddress/{addressId}")//"{userId}/removeAddress/{address}"
+    @DeleteMapping("removeAddress/{addressId}")
     @Operation(description = "Удалить адрес")
-    public void removeAddresses(@PathVariable Integer userId, @PathVariable Integer addressId) {
-        userService.removeAddressByUser(addressId, userId);
+    public void removeAddresses(Principal principal, @PathVariable Integer addressId) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        userService.removeAddressByUser(addressId, user.getId());
     }
 
-    @PostMapping("{userId}/addAddress")
+    @PostMapping("addAddress")
     @Operation(description = "Добавить адрес")
-    public AddressDto addAddress(@RequestBody AddressDto addressDto, @PathVariable Integer userId) {
-        return userService.addAddressByUser(userId, addressDto);
+    public AddressDto addAddress(@RequestBody AddressDto addressDto, Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        return userService.addAddressByUser(user.getId(), addressDto);
     }
 
-    @PutMapping("{userId}/refactorAddress/{addressId}")
+    @PutMapping("refactorAddress/{addressId}")
     @Operation(description = "Редактировать адрес")
-    public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer userId, @PathVariable  Integer addressId) {
-        return userService.refactorAddressByUser(addressDto, userId, addressId);
+    public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer addressId, Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        return userService.refactorAddressByUser(addressDto, user.getId(), addressId);
     }
 
-    @GetMapping("{userId}/Basket")
+    @GetMapping("Basket")
     @Operation(description = "Получить корзину")
-    public List<BasketDto> Basket(@PathVariable Integer userId) {
-        return userService.getBasketByUser(userId);
+    public List<BasketDto> Basket(Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        return userService.getBasketByUser(user.getId());
     }
 
-    @PostMapping("{userId}/{count}/addToBasket/{storeItemId}")
+    @PostMapping("{count}/addToBasket/{storeItemId}")
     @Operation(description = "Добавить товар в корзину")
-    public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, @PathVariable Integer userId) {
-        userService.addItemToBasketByUser(storeItemId, userId, count);
+    public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        userService.addItemToBasketByUser(storeItemId, user.getId(), count);
     }
 
-    @DeleteMapping("{userId}/{storeItemId}/refactorAddress")
+    @DeleteMapping("deleteFromBasket/{storeItemId}")
     @Operation(description = "Удаление товара из корзины")
-    public void removeItemFromBasket(@PathVariable Integer userId, @PathVariable Integer storeItemId) {
-        userService.removeFromBasketByUser(storeItemId, userId);
+    public void removeItemFromBasket(@PathVariable Integer storeItemId, Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        userService.removeFromBasketByUser(storeItemId, user.getId());
     }
 
-    @GetMapping("{userId}/clearBasket")
+    @GetMapping("clearBasket")
     @Operation(description = "Очищение корзины")
-    public void clearBasket(@PathVariable Integer userId) {
-        userService.clearBasketByUser(userId);
+    public void clearBasket(Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        userService.clearBasketByUser(user.getId());
     }
 
-//    /** купить товар */
-//    void buyItems(Integer... id);//TODO
-
-    @GetMapping("{userId}/byeItems/{addressId}")
-    public PaymentRequest byeItems(@PathVariable Integer addressId, @PathVariable Integer userId){
-        return userService.buyItems(userId,addressId);
+    @GetMapping("byeItems/{addressId}")
+    public PaymentRequest byeItems(@PathVariable Integer addressId, Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        return userService.buyItems(user.getId(), addressId);
     }
 
-
-    @GetMapping("{userId}/Orders")
+    @GetMapping("Orders")
     @Operation(description = "Получить все заказы")
-    public List<UserOrderDto> getAllOrders(@PathVariable Integer userId) {
-        return userService.getAllOrdersByUser(userId);
+    public List<UserOrderDto> getAllOrders(Principal principal) {
+        User user = userRepository.findByPhoneNumber(principal.getName());
+        return userService.getAllOrdersByUser(user.getId());
     }
-
 
     @PostMapping("createUser")
     @Operation(description = "Создание нового юзера")

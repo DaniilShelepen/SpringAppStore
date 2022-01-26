@@ -23,5 +23,6 @@ public class Manager {
     private Integer id;
     protected String userName;
     protected String password;
+    protected String personalNumber;
 
 }

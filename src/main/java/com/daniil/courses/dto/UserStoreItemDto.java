@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserStoreItemDto {
+    protected Integer id;
     protected ItemDto itemDto;
     protected BigDecimal price;
 
