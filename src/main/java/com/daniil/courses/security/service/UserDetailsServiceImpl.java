@@ -3,7 +3,6 @@ package com.daniil.courses.security.service;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.Roles;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(DBUser.getPhoneNumber())
-                .password(new BCryptPasswordEncoder().encode(DBUser.getPassword()))
+                .password(DBUser.getPassword())
                 .roles(Roles.USER.toString())
                 .build();
     }

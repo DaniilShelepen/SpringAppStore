@@ -15,11 +15,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.math.BigDecimal;
+import java.security.spec.KeySpec;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -226,12 +231,11 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByPhoneNumber(userdto.getPhoneNumber()) != null)
             throw new UserAlreadyExist("User with this phone number already exist!");
 
-
         userRepository.save(User.builder()
                 .name(userdto.getName())
                 .surname(userdto.getSurname())
                 .birthday(userdto.getBirthday())
-                .password(userdto.getPassword())
+                .password(new BCryptPasswordEncoder().encode(userdto.getPassword()))
                 .phoneNumber(userdto.getPhoneNumber())
                 .available(true)
                 .build());

@@ -9,6 +9,7 @@ import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
 
         managerRepository.save(Manager.builder()
                 .userName(managerDto.getUserName())
-                .password(managerDto.getPassword())
+                .password(new BCryptPasswordEncoder().encode(managerDto.getPassword()))
                 .personalNumber(managerDto.getPersonalNumber())
                 .build());
         return managerDto;

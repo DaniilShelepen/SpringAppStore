@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -32,7 +31,7 @@ public class ManagerDetailsServiceImpl implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(DBManager.getPersonalNumber())
-                .password(new BCryptPasswordEncoder().encode(DBManager.getPassword()))
+                .password(DBManager.getPassword())
                 .roles(Roles.MANAGER.toString())
                 .build();
     }

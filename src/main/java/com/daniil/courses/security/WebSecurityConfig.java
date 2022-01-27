@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,22 +18,27 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsServiceImpl userDetailsService;
     private ManagerDetailsServiceImpl managerDetailsService;
     private AdminDetailsServiceImpl adminDetailsService;
-    private AdminRepository adminRepository;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, ManagerDetailsServiceImpl managerDetailsService, AdminDetailsServiceImpl adminDetailsService, AdminRepository adminRepository) {
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, ManagerDetailsServiceImpl managerDetailsService, AdminDetailsServiceImpl adminDetailsService) {
         this.userDetailsService = userDetailsService;
         this.managerDetailsService = managerDetailsService;
         this.adminDetailsService = adminDetailsService;
-        this.adminRepository = adminRepository;
     }
 
 
@@ -45,8 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users/createUser").permitAll()
                 .antMatchers("/api/users/storeItems").permitAll()
                 .antMatchers("/api/filter/notAuthorized/**").permitAll()
-                .antMatchers("/api/admin/createManager").permitAll()
-                .antMatchers("api/bank/getAnswer").hasRole("NAN")
+                .antMatchers("/api/filter/notAuthorized/**").hasRole("MANAGER")
+                .antMatchers("/api/admin/createManager").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -55,18 +61,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        adminRepository.save(Admin.builder().build());
+
+
+
         auth.userDetailsService(userDetailsService);
         auth.userDetailsService(managerDetailsService);
-        auth.userDetailsService(adminDetailsService);
+        //auth.userDetailsService(adminDetailsService);
+        auth.inMemoryAuthentication()
+                .withUser("admin")
+                .password("admin")
+                .roles("ADMIN");
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }
