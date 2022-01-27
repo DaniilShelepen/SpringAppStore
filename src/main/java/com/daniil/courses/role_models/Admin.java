@@ -20,6 +20,6 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private final String name = "admin";
-    private final String password = "admin";
+    private  String name;
+    private  String password;
 }

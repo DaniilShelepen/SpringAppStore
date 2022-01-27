@@ -1,5 +1,7 @@
 package com.daniil.courses.security;
 
+import com.daniil.courses.repositories.AdminRepository;
+import com.daniil.courses.role_models.Admin;
 import com.daniil.courses.security.service.AdminDetailsServiceImpl;
 import com.daniil.courses.security.service.ManagerDetailsServiceImpl;
 import com.daniil.courses.security.service.UserDetailsServiceImpl;
@@ -23,12 +25,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
     private ManagerDetailsServiceImpl managerDetailsService;
     private AdminDetailsServiceImpl adminDetailsService;
+    private AdminRepository adminRepository;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, ManagerDetailsServiceImpl managerDetailsService, AdminDetailsServiceImpl adminDetailsService) {
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, ManagerDetailsServiceImpl managerDetailsService, AdminDetailsServiceImpl adminDetailsService, AdminRepository adminRepository) {
         this.userDetailsService = userDetailsService;
         this.managerDetailsService = managerDetailsService;
         this.adminDetailsService = adminDetailsService;
+        this.adminRepository = adminRepository;
     }
 
 
@@ -39,8 +43,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/v3/api-docs").permitAll()
                 .antMatchers("/api/users/createUser").permitAll()
-                .antMatchers("/api/filter/**").permitAll()
+                .antMatchers("/api/users/storeItems").permitAll()
+                .antMatchers("/api/filter/notAuthorized/**").permitAll()
                 .antMatchers("/api/admin/createManager").permitAll()
+                .antMatchers("api/bank/getAnswer").hasRole("NAN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -52,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        adminRepository.save(Admin.builder().build());
         auth.userDetailsService(userDetailsService);
         auth.userDetailsService(managerDetailsService);
         auth.userDetailsService(adminDetailsService);

@@ -233,6 +233,7 @@ public class UserServiceImpl implements UserService {
                 .birthday(userdto.getBirthday())
                 .password(userdto.getPassword())
                 .phoneNumber(userdto.getPhoneNumber())
+                .available(true)
                 .build());
 
         return userdto;

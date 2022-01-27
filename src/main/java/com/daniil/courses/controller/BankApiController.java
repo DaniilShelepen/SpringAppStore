@@ -3,6 +3,7 @@ package com.daniil.courses.controller;
 import com.daniil.courses.payment.WebHookAcquireRequest;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.repositories.OrderRepository;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Hidden
 @RestController
 @RequestMapping("api/bank/")
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class BankApiController {
         this.orderRepository = orderRepository;
     }
 
-    @PostMapping("getanswer")
+    @PostMapping("getAnswer")
     public void getAnswer(@RequestBody WebHookAcquireRequest webHookAcquireRequest) {
         Order order = orderRepository.findByExternalId(webHookAcquireRequest.getExternalId());
         order.setStatus(webHookAcquireRequest.getDescription());

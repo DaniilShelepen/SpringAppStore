@@ -181,7 +181,6 @@ class FinalApplicationTests {
             .build();
 
     @Test
-    @org.junit.jupiter.api.Order(1)
     void contextLoads() {
 //айтемы юсер адрес
 
@@ -219,7 +218,7 @@ class FinalApplicationTests {
         managerRepository.save(manager);
 
 
-       RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
 
         /** типо покупаем **/
 
@@ -247,5 +246,16 @@ class FinalApplicationTests {
 
     }
 
+
+    @Test
+    void admin() {
+
+        adminRepository.save(Admin.builder()
+                .name("admin")
+                .password("admin")
+                .build());
+        log.warn(adminRepository.findByName("admin").toString());
+
+    }
 
 }

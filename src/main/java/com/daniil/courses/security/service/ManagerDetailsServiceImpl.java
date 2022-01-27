@@ -23,15 +23,15 @@ public class ManagerDetailsServiceImpl implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
 
-        Manager DBManager = managerRepository.findByUserName(username);
+        Manager DBManager = managerRepository.findByPersonalNumber(personalNumber);
 
         if (DBManager == null)
             throw new ManagerNotFound("Manager is not found");
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(DBManager.getUserName())
+                .username(DBManager.getPersonalNumber())
                 .password(new BCryptPasswordEncoder().encode(DBManager.getPassword()))
                 .roles(Roles.MANAGER.toString())
                 .build();
