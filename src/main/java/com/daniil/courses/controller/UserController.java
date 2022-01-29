@@ -1,6 +1,7 @@
 package com.daniil.courses.controller;
 
 import com.daniil.courses.dto.*;
+import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
@@ -9,7 +10,6 @@ import com.daniil.courses.services.BasketService;
 import com.daniil.courses.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -35,7 +35,7 @@ public class UserController {
     public List<AddressDto> getAddresses(Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return userService.getAllAddressesByUser(user.getId());
     }
 
@@ -45,7 +45,7 @@ public class UserController {
     public void removeAddresses(Principal principal, @PathVariable Integer addressId) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         userService.removeAddressByUser(addressId, user.getId());
     }
 
@@ -55,7 +55,7 @@ public class UserController {
     public AddressDto addAddress(@RequestBody AddressDto addressDto, Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return userService.addAddressByUser(user.getId(), addressDto);
     }
 
@@ -65,7 +65,7 @@ public class UserController {
     public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer addressId, Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return userService.refactorAddressByUser(addressDto, user.getId(), addressId);
     }
 
@@ -75,7 +75,7 @@ public class UserController {
     public List<BasketDto> Basket(Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return basketService.getBasketByUser(user.getId());
     }
 
@@ -85,7 +85,7 @@ public class UserController {
     public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         basketService.addItemToBasketByUser(storeItemId, user.getId(), count);
     }
 
@@ -95,7 +95,7 @@ public class UserController {
     public void removeItemFromBasket(@PathVariable Integer storeItemId, Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         basketService.removeFromBasketByUser(storeItemId, user.getId());
     }
 
@@ -105,7 +105,7 @@ public class UserController {
     public void clearBasket(Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         basketService.clearBasketByUser(user.getId());
     }
 
@@ -114,7 +114,7 @@ public class UserController {
     public PaymentRequest byeItems(@PathVariable Integer addressId, Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return userService.buyItems(user.getId(), addressId);
     }
 
@@ -124,7 +124,7 @@ public class UserController {
     public List<UserOrderDto> getAllOrders(Principal principal) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
-            throw new UsernameNotFoundException("Sorry but you are blocked :(");
+            throw new UserNotFound("Sorry but you are blocked :(");
         return userService.getAllOrdersByUser(user.getId());
     }
 

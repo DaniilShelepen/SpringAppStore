@@ -39,7 +39,7 @@ public class FinalApplication {
             managerService.addNewItem(new ManagerStoreItemDto(null,
                     new ItemDto("Ноутбук Apple Macbook Air 13\" M1 2020 MGN63", "13.3\" 2560 x 1600 IPS, 60 Гц, несенсорный, Apple M1 3200 МГц, 8 ГБ, SSD 256 ГБ, видеокарта встроенная, Mac OS, цвет крышки серый",
                             "laptop", "SSD 256", "Apple M1", LocalDate.of(2020,3,15)),
-                    BigDecimal.ONE,
+                    BigDecimal.valueOf(2000),
                     true,
                     ManagerDto.toShortManagerDto(manager)),
                     manager.getId());
