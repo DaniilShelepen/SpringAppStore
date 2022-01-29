@@ -21,9 +21,9 @@ public class UserOrderDto {
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
-    @DateTimeFormat(pattern = "dd.MM.yyy")
-    protected LocalDate dateOfRefactoring;
+    protected Date dateOfRefactoring;
     protected BigDecimal price;
     protected List<String> items;
+    protected AddressDto addressDto;
 
 }

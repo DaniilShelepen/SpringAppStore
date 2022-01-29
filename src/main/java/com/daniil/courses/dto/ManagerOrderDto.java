@@ -21,8 +21,7 @@ public class ManagerOrderDto {
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
-    @DateTimeFormat(pattern = "dd.MM.yyyy")
-    protected LocalDate dateOfRefactoring;
+    protected Date dateOfRefactoring;
     protected BigDecimal price;
     protected UserDto user;
     protected AddressDto address;

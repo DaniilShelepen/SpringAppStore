@@ -8,21 +8,22 @@ import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
+import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
+import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.ManagerService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ManagerServiceImpl implements ManagerService {
+public class ManagerServiceImpl implements ManagerService, UserDetailsService {
 
     ItemRepository itemRepository;
     ManagerRepository managerRepository;
@@ -49,6 +50,7 @@ public class ManagerServiceImpl implements ManagerService {
                 .driverConfiguration(storeItemDto.getItemDto().getDriverConfiguration())
                 .CPU(storeItemDto.getItemDto().getCPU())
                 .releaseDate(storeItemDto.getItemDto().getReleaseDate())
+                .available(storeItemDto.isAvailable())
                 .build();
 
         StoreItem storeItem = StoreItem.builder()
@@ -62,7 +64,7 @@ public class ManagerServiceImpl implements ManagerService {
         storeItemRepository.save(storeItem);
 
         return storeItemRepository.findById(storeItem.getId()).stream()
-                .map(storeItem1 -> new ManagerStoreItemDto(storeItem1.getId(), storeItemDto.getItemDto(), storeItem1.getPrice(), storeItem1.isAvailable(), storeItem1.getManager())).findFirst().orElseThrow();
+                .map(storeItem1 -> new ManagerStoreItemDto(storeItem1.getId(), storeItemDto.getItemDto(), storeItem1.getPrice(), storeItem1.isAvailable(), ManagerDto.toShortManagerDto(storeItem1.getManager()))).findFirst().orElseThrow();
 
     }
 
@@ -80,7 +82,7 @@ public class ManagerServiceImpl implements ManagerService {
                 .map(storeItem -> new ManagerStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()),
                         storeItem.getPrice(),
                         storeItem.isAvailable(),
-                        storeItem.getManager()))
+                        ManagerDto.toShortManagerDto(storeItem.getManager())))
                 .collect(Collectors.toList());
     }
 
@@ -88,29 +90,15 @@ public class ManagerServiceImpl implements ManagerService {
     public ManagerStoreItemDto refactorStoreItem(Integer storeItemId, ManagerStoreItemDto storeItemDto, Integer managerId) {
 
         StoreItem refactorStoreItem = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("Store item is not found"));
-        managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
-
-        Item findItem = itemRepository.findById(storeItemRepository.findById(storeItemId).get().getItem().getId()).orElseThrow();
-
-        findItem.setCPU(storeItemDto.getItemDto().getCPU());
-        findItem.setType(storeItemDto.getItemDto().getType());
-        findItem.setReleaseDate(storeItemDto.getItemDto().getReleaseDate());
-        findItem.setDescription(storeItemDto.getItemDto().getDescription());
-        findItem.setDriverConfiguration(storeItemDto.getItemDto().getDriverConfiguration());
-        findItem.setName(storeItemDto.getItemDto().getName());
-
-        itemRepository.save(findItem);
-
-        refactorStoreItem.setItem(findItem);
-        refactorStoreItem.setPrice(storeItemDto.getPrice());
-        refactorStoreItem.setAvailable(storeItemDto.isAvailable());
-        refactorStoreItem.setManager(managerRepository.findById(managerId).orElseThrow());
-
+        refactorStoreItem.setAvailable(false);
+        Item findItem = itemRepository.findById(storeItemRepository.findById(storeItemId).orElseThrow().getItem().getId()).orElseThrow();
+        findItem.setAvailable(false);
 
         storeItemRepository.save(refactorStoreItem);
+        itemRepository.save(findItem);
 
-        return storeItemRepository.findById(refactorStoreItem.getId()).stream()
-                .map(storeItem1 -> new ManagerStoreItemDto(storeItem1.getId(), storeItemDto.getItemDto(), storeItem1.getPrice(), storeItem1.isAvailable(), storeItem1.getManager())).findFirst().orElseThrow();
+       return addNewItem(storeItemDto, managerId);
+
     }
 
     @Override
@@ -136,7 +124,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         order.setStatus(updateStatus);
-        order.setDateOfRefactoring(LocalDate.now());
+        order.setDateOfRefactoring(new Date());
         order.setManager(managerRepository.findById(managerId).orElseThrow());
 
         orderRepository.save(order);
@@ -196,5 +184,19 @@ public class ManagerServiceImpl implements ManagerService {
         return user.getName() + " unblocked!";
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
+
+        Manager DBManager = managerRepository.findByPersonalNumber(personalNumber);
+
+        if (DBManager == null)
+            throw new ManagerNotFound("Manager is not found");
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(DBManager.getPersonalNumber())
+                .password(DBManager.getPassword())
+                .roles(Roles.MANAGER.toString())
+                .build();
+    }
 
 }

@@ -8,4 +8,5 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface StoreItemRepository extends JpaRepository<StoreItem, Integer> {
+    StoreItem findByIdAndAvailable(Integer id, boolean available);
 }

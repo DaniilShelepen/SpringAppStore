@@ -28,26 +28,6 @@ public interface UserService {
     AddressDto refactorAddressByUser(AddressDto addressDto, Integer userId, Integer addressId);
 
     /**
-     * получить корзину
-     */
-    List<BasketDto> getBasketByUser(Integer userId);
-
-    /**
-     * добавить товар в корзину
-     */
-    void addItemToBasketByUser(Integer storeItemId, Integer userId, Integer count);
-
-    /**
-     * удалить товар из корзины
-     */
-    void removeFromBasketByUser(Integer storeItemId, Integer userId);
-
-    /**
-     * очистить корзину
-     */
-    void clearBasketByUser(Integer userId);
-
-    /**
      * получить все доступные товары
      */
     List<UserStoreItemDto> viewAvailableItems();

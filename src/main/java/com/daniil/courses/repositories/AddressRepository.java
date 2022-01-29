@@ -10,9 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {
-
-
-
     List<Address> findByUserIdAndVisible(Integer userId,boolean visible);
 
     @Transactional

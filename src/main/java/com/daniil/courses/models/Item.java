@@ -27,10 +27,9 @@ public class Item {
     protected String type;
     protected String driverConfiguration;
     protected String CPU;
-
-
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate releaseDate;
+    protected boolean available;
 
 
 }

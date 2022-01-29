@@ -9,29 +9,32 @@ import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
+import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.math.BigDecimal;
-import java.security.spec.KeySpec;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+@Slf4j
+public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     UserRepository userRepository;
@@ -39,32 +42,31 @@ public class UserServiceImpl implements UserService {
     StoreItemRepository storeItemRepository;
     BasketRepository basketRepository;
     OrderRepository orderRepository;
+    BasketServiceImpl basketService;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
                            StoreItemRepository storeItemRepository, BasketRepository basketRepository,
-                           OrderRepository orderRepository) {
+                           OrderRepository orderRepository,BasketServiceImpl basketService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.storeItemRepository = storeItemRepository;
         this.basketRepository = basketRepository;
         this.orderRepository = orderRepository;
+        this.basketService=basketService;
     }
 
     @Override
     public List<AddressDto> getAllAddressesByUser(Integer userId) {
 
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found"));
 
         return addressRepository.findByUserIdAndVisible(userId, true).stream()
-                .map(address -> new AddressDto(address.getId(), address.getBase(),
-                        address.getCity(), address.getEntrance(),
-                        address.getFlat(), address.getFloor(),
-                        address.getStreet())).collect(Collectors.toList());
+                .map(address -> new AddressDto(address.getId(), address.getCity(), address.getStreet(),
+                        address.getBase(), address.getFlat(), address.getFloor(), address.getEntrance()))
+                .collect(Collectors.toList());
     }
 
     public void removeAddressByUser(Integer addressId, Integer userId) {
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found"));
         Address removeAddress = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
         if (removeAddress != null) {
             removeAddress.setVisible(false);
@@ -92,58 +94,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AddressDto refactorAddressByUser(AddressDto addressDto, Integer userId, Integer addressId) {
-
         Address changedAddress = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
-
         if (changedAddress == null)
             throw new AddressIsNotFound("Address not found");
 
-        changedAddress.setCity(addressDto.getCity());
-        changedAddress.setStreet(addressDto.getStreet());
-        changedAddress.setBase(addressDto.getBase());
-        changedAddress.setFlat(addressDto.getFlat());
-        changedAddress.setFloor(addressDto.getFloor());
-        changedAddress.setEntrance(addressDto.getEntrance());
-
+        changedAddress.setVisible(false);
         addressRepository.save(changedAddress);
+
+        addressRepository.save(Address.builder()
+                .user(changedAddress.getUser())
+                .city(addressDto.getCity())
+                .street(addressDto.getStreet())
+                .base(addressDto.getBase())
+                .flat(addressDto.getFlat())
+                .floor(addressDto.getFloor())
+                .entrance(addressDto.getEntrance())
+                .visible(true)
+                .build());
+
         return addressDto;
-    }
-
-    @Override
-    public List<BasketDto> getBasketByUser(Integer userId) {
-        return basketRepository.findBasketByUserId(userId).stream()
-                .filter(basket -> basket.getStoreItem().isAvailable())
-                .map(basket -> new BasketDto(ItemDto.toItemDto(basket.getStoreItem().getItem())
-                        , basket.getCount(), basket.getPrice()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void addItemToBasketByUser(Integer storeItemId, Integer userId, Integer count) {
-
-        StoreItem storeItem = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("store item is not found"));
-
-        if (!storeItem.isAvailable())
-            throw new StoreItemIsNotFound("store item is not found");
-
-        basketRepository.save(Basket.builder()
-                .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User not found")))
-                .storeItem(storeItem)
-                .count(count)
-                .price(storeItem.getPrice().multiply(BigDecimal.valueOf(count)))
-                .build()
-        );
-    }
-
-    @Override
-    public void removeFromBasketByUser(Integer storeItemId, Integer userId) {
-        basketRepository.deleteByStoreItemIdAndUserId(storeItemId, userId);
-    }
-
-    @Override
-    public void clearBasketByUser(Integer userId) {
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found"));
-        basketRepository.deleteAllByUserId(userId);
     }
 
     @Override
@@ -172,7 +141,7 @@ public class UserServiceImpl implements UserService {
         if (address == null)
             throw new AddressIsNotFound("Address is not found");
         List<Basket> basketList = basketRepository.findAllByUserId(userId);
-        BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basket -> Double.parseDouble(basket.getPrice().toString())).sum());
+        BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basketItem -> Double.parseDouble(basketItem.getPrice().toString())).sum());
 
         List<StoreItem> storeItems = basketRepository.findAllByUserId(userId).stream()
                 .map(Basket::getStoreItem).collect(Collectors.toList());
@@ -185,12 +154,12 @@ public class UserServiceImpl implements UserService {
                 .storeItem(storeItems)
                 .address(address)
                 .date(LocalDate.now())
-                .dateOfRefactoring(LocalDate.now())
+                .dateOfRefactoring(new Date())
                 .price(price)
                 .status("Ожидает подтверждения платежа")
                 .build());
 
-        clearBasketByUser(userId);
+        basketService.clearBasketByUser(userId);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -219,9 +188,8 @@ public class UserServiceImpl implements UserService {
         return orderRepository.findAllByUserId(userId).stream()
                 .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
                         order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName())
-                                .collect(Collectors.toList())
-                ))
+                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
+                        AddressDto.toAddressDto(order.getAddress())))
                 .collect(Collectors.toList());
     }
 
@@ -252,5 +220,20 @@ public class UserServiceImpl implements UserService {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
+
+        User DBUser = userRepository.findByPhoneNumber(phoneNumber);
+
+        if (DBUser == null)
+            throw new UsernameNotFoundException("User is not found");
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(DBUser.getPhoneNumber())
+                .password(DBUser.getPassword())
+                .roles(Roles.USER.toString())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dto.AddressDto;
 import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.dto.UserStoreItemDto;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j//TODO убери потом
 public class FilterServiceImpl implements FilterService {
 
     StoreItemRepository storeItemRepository;
@@ -71,8 +71,8 @@ public class FilterServiceImpl implements FilterService {
                 .filter(order -> order.getStatus().toLowerCase().contains(orderStatuses.toLowerCase()))
                 .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
                         order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName())
-                                .collect(Collectors.toList())))
+                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
+                        AddressDto.toAddressDto(order.getAddress())))
                 .collect(Collectors.toList());
     }
 
@@ -85,8 +85,8 @@ public class FilterServiceImpl implements FilterService {
                         .sorted(Comparator.comparing(Order::getDate))
                         .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
                                 order.getStoreItem().stream()
-                                        .map(storeItem -> storeItem.getItem().getName())
-                                        .collect(Collectors.toList())))
+                                        .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
+                                AddressDto.toAddressDto(order.getAddress())))
                         .collect(Collectors.toList());
         Collections.reverse(finalList);
         return finalList;
@@ -99,8 +99,8 @@ public class FilterServiceImpl implements FilterService {
                 .sorted(Comparator.comparing(Order::getDate))
                 .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
                         order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName())
-                                .collect(Collectors.toList())))
+                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
+                        AddressDto.toAddressDto(order.getAddress())))
                 .collect(Collectors.toList());
     }
 }

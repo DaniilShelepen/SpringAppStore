@@ -8,19 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface BasketRepository extends JpaRepository<Basket, Integer> {
-
-
     List<Basket> findBasketByUserId(Integer user_id);
 
     @Transactional
-    void deleteByStoreItemIdAndUserId(Integer storeItem_id, Integer user_id);
+    void deleteByStoreItemIdAndUserId(Integer storeItemId, Integer userId);
 
     @Transactional
     void deleteAllByUserId(Integer userId);
 
     List<Basket> findAllByUserId(Integer user_id);
 
-    Basket findByUserId(Integer user_id);
-
-    List<Basket> findAllByStoreItemAndUserId(StoreItem storeItem, Integer user_id);
+    Basket findByStoreItemIdAndUserId(Integer storeItem, Integer userId);
 }

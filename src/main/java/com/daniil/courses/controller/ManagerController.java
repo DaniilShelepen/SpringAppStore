@@ -45,7 +45,7 @@ public class ManagerController {
     }
 
     @AccessAdminAndManager
-    @PutMapping("refactorStoreItem/{storeItemId}/{price}/{available}")
+    @PutMapping("refactorStoreItem/{storeItemId}")
     @Operation(description = "Редактирование товара")
     public ManagerStoreItemDto refactorStoreItem(@PathVariable Integer storeItemId, @RequestBody ManagerStoreItemDto storeItemDto, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumber(principal.getName());

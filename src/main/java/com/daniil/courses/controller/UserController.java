@@ -5,23 +5,23 @@ import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.AccessUser;
+import com.daniil.courses.services.BasketService;
 import com.daniil.courses.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 @RequestMapping("api/users/")
 @RequiredArgsConstructor
-@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private final BasketService basketService;
 
     @GetMapping("storeItems")
     @Operation(description = "Вывод всех доступных товаров")
@@ -76,7 +76,7 @@ public class UserController {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UsernameNotFoundException("Sorry but you are blocked :(");
-        return userService.getBasketByUser(user.getId());
+        return basketService.getBasketByUser(user.getId());
     }
 
     @AccessUser
@@ -86,7 +86,7 @@ public class UserController {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UsernameNotFoundException("Sorry but you are blocked :(");
-        userService.addItemToBasketByUser(storeItemId, user.getId(), count);
+        basketService.addItemToBasketByUser(storeItemId, user.getId(), count);
     }
 
     @AccessUser
@@ -96,7 +96,7 @@ public class UserController {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UsernameNotFoundException("Sorry but you are blocked :(");
-        userService.removeFromBasketByUser(storeItemId, user.getId());
+        basketService.removeFromBasketByUser(storeItemId, user.getId());
     }
 
     @AccessUser
@@ -106,7 +106,7 @@ public class UserController {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UsernameNotFoundException("Sorry but you are blocked :(");
-        userService.clearBasketByUser(user.getId());
+        basketService.clearBasketByUser(user.getId());
     }
 
     @AccessUser

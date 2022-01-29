@@ -10,13 +10,13 @@ import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.List;
 
+
+@Entity
 @Getter
 @Setter
-@Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Data
 public class StoreItem {
     protected BigDecimal price;
     protected boolean available;

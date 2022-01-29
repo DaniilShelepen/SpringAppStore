@@ -3,16 +3,17 @@ package com.daniil.courses.models;
 import com.daniil.courses.role_models.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
 
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 @SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Entity
 public class Address {

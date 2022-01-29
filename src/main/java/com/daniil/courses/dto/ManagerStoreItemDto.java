@@ -1,6 +1,5 @@
 package com.daniil.courses.dto;
 
-import com.daniil.courses.role_models.Manager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class ManagerStoreItemDto {
     protected ItemDto itemDto;
     protected BigDecimal price;
     protected boolean available;
-    protected Manager manger;
+    protected ManagerDto manger;
 
 
 }

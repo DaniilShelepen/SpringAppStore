@@ -6,7 +6,6 @@ import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
-import com.daniil.courses.role_models.Admin;
 import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
@@ -26,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,8 +45,6 @@ class FinalApplicationTests {
     @Autowired
     ManagerRepository managerRepository;
     @Autowired
-    AdminRepository adminRepository;
-    @Autowired
     AddressRepository addressRepository;
     @Autowired
     UserRepository userRepository;
@@ -65,12 +63,12 @@ class FinalApplicationTests {
     FilterService filterService;
 
     private static final Item item1 = new Item(null, "MacOs", "good very mathafaka",
-            "PC", "SSD 1024", "A93", LocalDate.of(2002, 3, 15));
+            "PC", "SSD 1024", "A93", LocalDate.of(2002, 3, 15),true);
 
     private static final Item item2 = new Item(null, "Iphone 11", "mb moy",
-            "phone", "256GB", "A13", LocalDate.of(2002, 3, 15));
+            "phone", "256GB", "A13", LocalDate.of(2002, 3, 15),true);
     private static final Item item3 = new Item(null, "AirPods", "birushi",
-            "headPhones", "nun", "A3", LocalDate.of(2002, 3, 15));
+            "headPhones", "nun", "A3", LocalDate.of(2002, 3, 15),true);
 
 
     private static final User ME = User.builder()
@@ -94,7 +92,7 @@ class FinalApplicationTests {
             .city("NP")
             .entrance("chto")
             .flat("15")
-            .floor("4")
+            .floor("notnotnotnotbot")
             .street("loxovskay")
             .user(ME)
             .visible(true)
@@ -137,7 +135,7 @@ class FinalApplicationTests {
             .address(newAddress)
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
-            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(new Date())
             .status("AAAA")
             .build();
 
@@ -145,15 +143,16 @@ class FinalApplicationTests {
             .address(newAddress)
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
-            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(new Date())
             .status("AAAAAAa")
+            .storeItem(null)
             .build();
 
     Order order2 = Order.builder()
             .address(newAddress)
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
-            .dateOfRefactoring(LocalDate.of(2002, 3, 15))
+            .dateOfRefactoring(new Date())
             .status("AAAA")
             .build();
 
@@ -214,7 +213,6 @@ class FinalApplicationTests {
     void start() {
 
 
-        adminRepository.save(Admin.builder().build());
         managerRepository.save(manager);
 
 
@@ -249,12 +247,17 @@ class FinalApplicationTests {
 
     @Test
     void admin() {
+        userRepository.save(ME);
 
-        adminRepository.save(Admin.builder()
-                .name("admin")
-                .password("admin")
-                .build());
-        log.warn(adminRepository.findByName("admin").toString());
+        addressRepository.save(newAddress);
+
+        orderRepository.save(order1);
+
+        log.warn(newAddress.toString());
+        newAddress.setFloor("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        addressRepository.save(newAddress);
+
+        log.warn("{}",order1.toString());
 
     }
 
