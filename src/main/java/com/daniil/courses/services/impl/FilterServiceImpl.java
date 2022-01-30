@@ -5,6 +5,7 @@ import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.dto.UserStoreItemDto;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.OrderRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.services.FilterService;
@@ -33,7 +34,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<UserStoreItemDto> getAllItemsWithType(String type) {
-        return storeItemRepository.findAll().stream()
+        return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getType().equalsIgnoreCase(type))
                 .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
                 .collect(Collectors.toList());
@@ -41,7 +42,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<UserStoreItemDto> getAllItemsWithDriverConfiguration(String configuration) {
-        return storeItemRepository.findAll().stream()
+        return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getDriverConfiguration().equalsIgnoreCase(configuration))
                 .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
                 .collect(Collectors.toList());
@@ -49,7 +50,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<UserStoreItemDto> getAllItemsWithCPU(String CPU) {
-        return storeItemRepository.findAll().stream()
+        return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getCPU().equalsIgnoreCase(CPU))
                 .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
                 .collect(Collectors.toList());
@@ -58,11 +59,12 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date) {
-        return storeItemRepository.findAll().stream()
+        return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getReleaseDate().compareTo(date) > 0)
                 .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<UserOrderDto> filterUserOrderByStatus(Integer userId, String orderStatuses) {
@@ -103,4 +105,25 @@ public class FilterServiceImpl implements FilterService {
                         AddressDto.toAddressDto(order.getAddress())))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<UserStoreItemDto> getCheap() {
+        return storeItemRepository.findAllByAvailable(true).stream()
+                .sorted(Comparator.comparing(StoreItem::getPrice))
+                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserStoreItemDto> getExpensive() {
+
+        List<UserStoreItemDto> list =  storeItemRepository.findAllByAvailable(true).stream()
+                .sorted(Comparator.comparing(StoreItem::getPrice))
+                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .collect(Collectors.toList());
+
+        Collections.reverse(list);
+        return list;
+    }
+
 }

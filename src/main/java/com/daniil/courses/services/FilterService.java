@@ -19,7 +19,9 @@ public interface FilterService {
 
     List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date);//с этого момента и дальше
 
+    List<UserStoreItemDto> getCheap();
 
+    List<UserStoreItemDto> getExpensive();
 
 
     List<UserOrderDto> filterUserOrderByStatus(Integer userId,  String orderStatuses);

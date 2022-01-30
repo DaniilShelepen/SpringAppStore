@@ -7,6 +7,4 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-     ddl-auto: create
-#  liquibase:
-#      change-log: db.changelog.xml
+     ddl-auto: validate

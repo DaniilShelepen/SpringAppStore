@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface StoreItemRepository extends JpaRepository<StoreItem, Integer> {
     StoreItem findByIdAndAvailable(Integer id, boolean available);
+
+    List<StoreItem> findAllByAvailable(boolean available);
 }
