@@ -4,6 +4,7 @@ import com.daniil.courses.dto.ManagerDto;
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.exceptions.ManagerIsAlreadyExists;
 import com.daniil.courses.exceptions.ManagerNotFound;
+import com.daniil.courses.mappers.ManagerConvertor;
 import com.daniil.courses.repositories.ManagerRepository;
 import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.security.Roles;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
 
     private final ManagerRepository managerRepository;
+    private final ManagerConvertor managerConvertor;
 
     @Override
     public ManagerDto createManager(ManagerDto managerDto) {
@@ -39,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<ManagerDto> getAllManagers() {
         return managerRepository.findAll().stream()
-                .map(manager -> new ManagerDto(manager.getId(), manager.getUserName(), null, manager.getPersonalNumber()))
+                .map(managerConvertor::convert)
                 .collect(Collectors.toList());
     }
 

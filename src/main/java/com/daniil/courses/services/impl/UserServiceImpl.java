@@ -1,16 +1,26 @@
 package com.daniil.courses.services.impl;
 
 import com.daniil.courses.dto.*;
-import com.daniil.courses.exceptions.*;
+import com.daniil.courses.exceptions.AddressIsNotFound;
+import com.daniil.courses.exceptions.BasketIsEmpty;
+import com.daniil.courses.exceptions.UserAlreadyExist;
+import com.daniil.courses.exceptions.UserNotFound;
+import com.daniil.courses.mappers.AddressConvertor;
+import com.daniil.courses.mappers.OrderConvertor;
+import com.daniil.courses.mappers.StoreItemConvertor;
 import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.payment.Amount;
 import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.Roles;
+import com.daniil.courses.services.ORDER_STATUS;
 import com.daniil.courses.services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,26 +53,35 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     BasketRepository basketRepository;
     OrderRepository orderRepository;
     BasketServiceImpl basketService;
+    AddressConvertor addressConvertor;
+    StoreItemConvertor storeItemConvertor;
+    OrderConvertor orderConvertor;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
                            StoreItemRepository storeItemRepository, BasketRepository basketRepository,
-                           OrderRepository orderRepository,BasketServiceImpl basketService) {
+                           OrderRepository orderRepository, BasketServiceImpl basketService,
+                           AddressConvertor addressConvertor, StoreItemConvertor storeItemConvertor,
+                           OrderConvertor orderConvertor) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.storeItemRepository = storeItemRepository;
         this.basketRepository = basketRepository;
         this.orderRepository = orderRepository;
-        this.basketService=basketService;
+        this.basketService = basketService;
+        this.addressConvertor = addressConvertor;
+        this.storeItemConvertor = storeItemConvertor;
+        this.orderConvertor = orderConvertor;
     }
+
+
 
     @Override
     public List<AddressDto> getAllAddressesByUser(Integer userId) {
 
 
         return addressRepository.findByUserIdAndVisible(userId, true).stream()
-                .map(address -> new AddressDto(address.getId(), address.getCity(), address.getStreet(),
-                        address.getBase(), address.getFlat(), address.getFloor(), address.getEntrance()))
+                .map(addressConvertor::convert)
                 .collect(Collectors.toList());
     }
 
@@ -119,31 +138,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<UserStoreItemDto> viewAvailableItems() {
         return storeItemRepository.findAll().stream()
                 .filter(StoreItem::isAvailable)
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
 
-    @Value("${headers.api.secret}")
+    @Value("${bank.secret}")
     String apiSecret;
     @Value("${bank.url}")
     String bankUrl;
-    @Value("${bank.account}")
-    String bankAccount;
-    @Value("${controller.url}")
+    @Value("${bank.controller}")
     String controllerUrl;
 
 
+    @SneakyThrows
     @Override
-    public PaymentRequest buyItems(Integer userId, Integer addressId) {
-        basketRepository.findAllByUserId(userId).stream().findAny().orElseThrow(() -> new BasketIsEmpty("Your basket is empty"));
+    public PaymentRequest buyItems(Integer userId, Integer addressId, String accountId) {
         Address address = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
         if (address == null)
             throw new AddressIsNotFound("Address is not found");
+
         List<Basket> basketList = basketRepository.findAllByUserId(userId);
+        if (basketList == null)
+            throw new BasketIsEmpty("Your basket is empty");
+
         BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basketItem -> Double.parseDouble(basketItem.getPrice().toString())).sum());
 
-        List<StoreItem> storeItems = basketRepository.findAllByUserId(userId).stream()
+        List<StoreItem> storeItems = basketList.stream()
                 .map(Basket::getStoreItem).collect(Collectors.toList());
 
         String externalId = getRandomString();
@@ -156,7 +177,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .date(LocalDate.now())
                 .dateOfRefactoring(new Date())
                 .price(price)
-                .status("Ожидает подтверждения платежа")
+                .status(ORDER_STATUS.AWAITING_OF_CONFIRM.getDescription())
                 .build());
 
         basketService.clearBasketByUser(userId);
@@ -167,16 +188,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.set("api-secret", apiSecret);
 
-        String requestJson = "{\n" +
-                "    \"accountId\": \"" + bankAccount + "\",\n" +
-                "    \"amount\": {\n" +
-                "        \"currency\": \"USD\",\n" +
-                "        \"value\": " + price + "\n" +
-                "    },\n" +
-                "    \"externalId\": \"" + externalId + "\",\n" +
-                "    \"purpose\": \"Payment\",\n" +
-                "    \"acquireWebHook\": \"" + controllerUrl + "\"\n" +
-                "}";
+
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .accountId(accountId)
+                .amount(Amount.builder()
+                        .currency("USD")
+                        .value(price)
+                        .build())
+                .externalId(externalId)
+                .purpose("Payment")
+                .acquireWebHook(controllerUrl)
+                .build();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        String requestJson = mapper.writeValueAsString(paymentRequest);
 
         HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 
@@ -186,10 +212,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<UserOrderDto> getAllOrdersByUser(Integer userId) {
         return orderRepository.findAllByUserId(userId).stream()
-                .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
-                        order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
-                        AddressDto.toAddressDto(order.getAddress())))
+                .map(orderConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 

@@ -1,15 +1,14 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.dto.AddressDto;
-import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.dto.UserStoreItemDto;
+import com.daniil.courses.mappers.OrderConvertor;
+import com.daniil.courses.mappers.StoreItemConvertor;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.OrderRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.services.FilterService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,15 @@ public class FilterServiceImpl implements FilterService {
 
     StoreItemRepository storeItemRepository;
     OrderRepository orderRepository;
+    StoreItemConvertor storeItemConvertor;
+    OrderConvertor orderConvertor;
 
     @Autowired
-    public FilterServiceImpl(StoreItemRepository storeItemRepository, OrderRepository orderRepository) {
+    public FilterServiceImpl(OrderConvertor orderConvertor,StoreItemConvertor storeItemConvertor,StoreItemRepository storeItemRepository, OrderRepository orderRepository) {
         this.storeItemRepository = storeItemRepository;
         this.orderRepository = orderRepository;
+        this.storeItemConvertor = storeItemConvertor;
+        this.orderConvertor = orderConvertor;
     }
 
 
@@ -36,7 +39,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserStoreItemDto> getAllItemsWithType(String type) {
         return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getType().equalsIgnoreCase(type))
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +47,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserStoreItemDto> getAllItemsWithDriverConfiguration(String configuration) {
         return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getDriverConfiguration().equalsIgnoreCase(configuration))
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -52,7 +55,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserStoreItemDto> getAllItemsWithCPU(String CPU) {
         return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getCPU().equalsIgnoreCase(CPU))
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +64,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserStoreItemDto> getAllWithReleaseDate(LocalDate date) {
         return storeItemRepository.findAllByAvailable(true).stream()
                 .filter(storeItem -> storeItem.getItem().getReleaseDate().compareTo(date) > 0)
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -71,10 +74,7 @@ public class FilterServiceImpl implements FilterService {
 
         return orderRepository.findAllByUserId(userId).stream()
                 .filter(order -> order.getStatus().toLowerCase().contains(orderStatuses.toLowerCase()))
-                .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
-                        order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
-                        AddressDto.toAddressDto(order.getAddress())))
+                .map(orderConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -85,10 +85,7 @@ public class FilterServiceImpl implements FilterService {
         List<UserOrderDto> finalList =
                 orderRepository.findAllByUserId(userId).stream()
                         .sorted(Comparator.comparing(Order::getDate))
-                        .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
-                                order.getStoreItem().stream()
-                                        .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
-                                AddressDto.toAddressDto(order.getAddress())))
+                        .map(orderConvertor::convertForUser)
                         .collect(Collectors.toList());
         Collections.reverse(finalList);
         return finalList;
@@ -99,10 +96,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserOrderDto> filterUserOrderByDateOld(Integer userId) {
         return orderRepository.findAllByUserId(userId).stream()
                 .sorted(Comparator.comparing(Order::getDate))
-                .map(order -> new UserOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
-                        order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()),
-                        AddressDto.toAddressDto(order.getAddress())))
+                .map(orderConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
@@ -110,19 +104,19 @@ public class FilterServiceImpl implements FilterService {
     public List<UserStoreItemDto> getCheap() {
         return storeItemRepository.findAllByAvailable(true).stream()
                 .sorted(Comparator.comparing(StoreItem::getPrice))
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<UserStoreItemDto> getExpensive() {
-
-        List<UserStoreItemDto> list =  storeItemRepository.findAllByAvailable(true).stream()
+        List<UserStoreItemDto> list = storeItemRepository.findAllByAvailable(true).stream()
                 .sorted(Comparator.comparing(StoreItem::getPrice))
-                .map(storeItem -> new UserStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()), storeItem.getPrice()))
+                .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
 
         Collections.reverse(list);
+
         return list;
     }
 

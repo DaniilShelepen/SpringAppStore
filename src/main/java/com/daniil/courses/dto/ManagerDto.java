@@ -14,8 +14,4 @@ public class ManagerDto {
     protected String password;
     protected String personalNumber;
 
-    public static ManagerDto toShortManagerDto(Manager manager) {
-        return new ManagerDto(manager.getId(), manager.getUserName(), null, manager.getPersonalNumber());
-    }
-
 }

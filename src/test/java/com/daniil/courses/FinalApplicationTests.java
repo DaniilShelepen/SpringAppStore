@@ -136,7 +136,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(new Date())
-            .status("AAAA")
+           // .status("AAAA")
             .build();
 
     Order order1 = Order.builder()
@@ -144,7 +144,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(new Date())
-            .status("AAAAAAa")
+            //.status("AAAAAAa")
             .storeItem(null)
             .build();
 
@@ -153,7 +153,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(new Date())
-            .status("AAAA")
+           // .status("AAAA")
             .build();
 
     Manager manager = Manager.builder()

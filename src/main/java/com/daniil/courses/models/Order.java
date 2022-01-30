@@ -2,8 +2,10 @@ package com.daniil.courses.models;
 
 import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
+import com.daniil.courses.services.ORDER_STATUS;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -25,6 +27,7 @@ public class Order {
     protected String status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
+    @LastModifiedDate
     protected Date dateOfRefactoring;
     protected BigDecimal price;
     protected String externalId;

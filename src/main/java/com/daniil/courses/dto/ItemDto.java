@@ -24,8 +24,4 @@ public class ItemDto {
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate releaseDate;
 
-
-    public static ItemDto toItemDto(Item item) {
-        return new ItemDto(item.getName(), item.getDescription(), item.getType(), item.getDriverConfiguration(), item.getCPU(), item.getReleaseDate());
-    }
 }

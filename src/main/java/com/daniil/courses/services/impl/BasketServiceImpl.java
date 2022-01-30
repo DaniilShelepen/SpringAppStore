@@ -5,6 +5,7 @@ import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.exceptions.BasketIsEmpty;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
+import com.daniil.courses.mappers.BasketConvertor;
 import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
@@ -25,24 +26,25 @@ public class BasketServiceImpl implements BasketService {
     StoreItemRepository storeItemRepository;
     BasketRepository basketRepository;
     OrderRepository orderRepository;
+    BasketConvertor basketConvertor;
 
     @Autowired
     public BasketServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
-                           StoreItemRepository storeItemRepository, BasketRepository basketRepository,
-                           OrderRepository orderRepository) {
+                             StoreItemRepository storeItemRepository, BasketRepository basketRepository,
+                             OrderRepository orderRepository,BasketConvertor basketConvertor) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.storeItemRepository = storeItemRepository;
         this.basketRepository = basketRepository;
         this.orderRepository = orderRepository;
+        this.basketConvertor = basketConvertor;
     }
 
     @Override
     public List<BasketDto> getBasketByUser(Integer userId) {
         return basketRepository.findBasketByUserId(userId).stream()
                 .filter(basket -> basket.getStoreItem().isAvailable())
-                .map(basket -> new BasketDto(ItemDto.toItemDto(basket.getStoreItem().getItem())
-                        , basket.getCount(), basket.getPrice()))
+                .map(basketConvertor::convert)
                 .collect(Collectors.toList());
     }
 

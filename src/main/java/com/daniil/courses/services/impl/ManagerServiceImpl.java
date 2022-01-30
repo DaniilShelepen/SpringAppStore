@@ -4,6 +4,9 @@ import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
+import com.daniil.courses.mappers.OrderConvertor;
+import com.daniil.courses.mappers.StoreItemConvertor;
+import com.daniil.courses.mappers.UserConvertor;
 import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
@@ -12,6 +15,7 @@ import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.ManagerService;
+import com.daniil.courses.services.ORDER_STATUS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,15 +34,26 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
     StoreItemRepository storeItemRepository;
     OrderRepository orderRepository;
     UserRepository userRepository;
+    OrderConvertor orderConvertor;
+    StoreItemConvertor storeItemConvertor;
+    UserConvertor userConvertor;
 
     @Autowired
-    public ManagerServiceImpl(ItemRepository itemRepository, UserRepository userRepository, StoreItemRepository storeItemRepository, ManagerRepository managerRepository, OrderRepository orderRepository) {
+    public ManagerServiceImpl(ItemRepository itemRepository, ManagerRepository managerRepository,
+                              StoreItemRepository storeItemRepository, OrderRepository orderRepository,
+                              UserRepository userRepository, OrderConvertor orderConvertor,
+                              StoreItemConvertor storeItemConvertor, UserConvertor userConvertor) {
         this.itemRepository = itemRepository;
-        this.storeItemRepository = storeItemRepository;
         this.managerRepository = managerRepository;
+        this.storeItemRepository = storeItemRepository;
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
+        this.orderConvertor = orderConvertor;
+        this.storeItemConvertor = storeItemConvertor;
+        this.userConvertor = userConvertor;
     }
+
+
 
     @Override
     public ManagerStoreItemDto addNewItem(ManagerStoreItemDto storeItemDto, Integer managerId) {
@@ -64,7 +79,7 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
         storeItemRepository.save(storeItem);
 
         return storeItemRepository.findById(storeItem.getId()).stream()
-                .map(storeItem1 -> new ManagerStoreItemDto(storeItem1.getId(), storeItemDto.getItemDto(), storeItem1.getPrice(), storeItem1.isAvailable(), ManagerDto.toShortManagerDto(storeItem1.getManager()))).findFirst().orElseThrow();
+                .map(storeItemConvertor::convertForManager).findFirst().orElseThrow();
 
     }
 
@@ -79,10 +94,7 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
     @Override
     public List<ManagerStoreItemDto> viewAllStoreItems() {
         return storeItemRepository.findAll().stream()
-                .map(storeItem -> new ManagerStoreItemDto(storeItem.getId(), ItemDto.toItemDto(storeItem.getItem()),
-                        storeItem.getPrice(),
-                        storeItem.isAvailable(),
-                        ManagerDto.toShortManagerDto(storeItem.getManager())))
+                .map(storeItemConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 
@@ -97,23 +109,24 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
         storeItemRepository.save(refactorStoreItem);
         itemRepository.save(findItem);
 
-       return addNewItem(storeItemDto, managerId);
+        return addNewItem(storeItemDto, managerId);
 
     }
 
     @Override
     public String setOrderStatus(String externalId, Integer managerId) {
-        List<String> orderStatus = List.of(
-                "Платёж успешно выполнен",
-                "Ожидает доставки",
-                "Доставлено"
-        );
 
         Order order = orderRepository.findByExternalId(externalId);
         if (order == null)
             throw new RuntimeException();
 
-        if (order.getStatus().equals("Ожидает подтверждения платежа") || order.getStatus() == null)
+        List<String> orderStatus = List.of(
+                ORDER_STATUS.CONFIRMED.getDescription(),
+                ORDER_STATUS.AWAITING_OF_DELIVERY.getDescription(),
+                ORDER_STATUS.DELIVERED.getDescription()
+        );
+
+        if (order.getStatus().equals(ORDER_STATUS.AWAITING_OF_CONFIRM.getDescription()) || order.getStatus() == null)
             return "Вы не можете изменить статус заказа!";
 
         String updateStatus;
@@ -136,30 +149,21 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
     public List<ManagerOrderDto> getAllUserOrders(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found"));
         return orderRepository.findAllByUser(user).stream()
-                .map(order -> new ManagerOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(),
-                        UserDto.toUserDto(order.getUser()), AddressDto.toAddressDto(order.getAddress()), order.getExternalId(),
-                        order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName()).collect(Collectors.toList()), order.getManager()))
+                .map(orderConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ManagerOrderDto> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(order -> new ManagerOrderDto(order.getId(), order.getStatus(), order.getDate(), order.getDateOfRefactoring(), order.getPrice(), UserDto.toUserDto(order.getUser()),
-                        AddressDto.toAddressDto(order.getAddress()),
-                        order.getExternalId(),
-                        order.getStoreItem().stream()
-                                .map(storeItem -> storeItem.getItem().getName())
-                                .collect(Collectors.toList()),
-                        order.getManager()))
+                .map(orderConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ManagerUserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> new ManagerUserDto(user.getId(), user.getName(), user.getSurname(), null, user.getPhoneNumber(), user.getBirthday(), user.isAvailable()))
+                .map(userConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 

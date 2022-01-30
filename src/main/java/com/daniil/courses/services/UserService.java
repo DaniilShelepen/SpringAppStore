@@ -35,7 +35,7 @@ public interface UserService {
     /**
      * купить товар
      */
-    PaymentRequest buyItems(Integer userId, Integer addressId);
+    PaymentRequest buyItems(Integer userId, Integer addressId, String accountId);
 
     /**
      * получить все заказы

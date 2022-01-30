@@ -110,12 +110,12 @@ public class UserController {
     }
 
     @AccessUser
-    @GetMapping("byeItems/{addressId}")
-    public PaymentRequest byeItems(@PathVariable Integer addressId, Principal principal) {
+    @GetMapping("byeItems/{addressId}/{bankCard}")
+    public PaymentRequest byeItems(@PathVariable Integer addressId, Principal principal, @PathVariable String bankCard) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UserNotFound("Sorry but you are blocked :(");
-        return userService.buyItems(user.getId(), addressId);
+        return userService.buyItems(user.getId(), addressId,bankCard);
     }
 
     @AccessUser
