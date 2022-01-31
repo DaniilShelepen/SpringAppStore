@@ -1,4 +1,4 @@
-package com.daniil.courses.payment;
+package com.daniil.courses.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

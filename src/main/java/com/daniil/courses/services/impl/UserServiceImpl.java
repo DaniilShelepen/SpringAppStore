@@ -1,10 +1,11 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.client.BankPaymentClient;
+import com.daniil.courses.client.model.Amount;
+import com.daniil.courses.client.model.PaymentRequest;
+import com.daniil.courses.client.model.PaymentResponce;
 import com.daniil.courses.dto.*;
-import com.daniil.courses.exceptions.AddressIsNotFound;
-import com.daniil.courses.exceptions.BasketIsEmpty;
-import com.daniil.courses.exceptions.UserAlreadyExist;
-import com.daniil.courses.exceptions.UserNotFound;
+import com.daniil.courses.exceptions.*;
 import com.daniil.courses.mappers.AddressConvertor;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
@@ -12,31 +13,23 @@ import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.payment.Amount;
-import com.daniil.courses.payment.PaymentRequest;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.ORDER_STATUS;
 import com.daniil.courses.services.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -44,37 +37,33 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
+    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final StoreItemRepository storeItemRepository;
+    private final BasketRepository basketRepository;
+    private final OrderRepository orderRepository;
+    private final BasketServiceImpl basketService;
+    private final AddressConvertor addressConvertor;
+    private final StoreItemConvertor storeItemConvertor;
+    private final OrderConvertor orderConvertor;
+    private final BankPaymentClient bankPaymentClient;
+    private String apiSecret;
+    private String bankUrl;
+    private String controllerUrl;
 
-    UserRepository userRepository;
-    AddressRepository addressRepository;
-    StoreItemRepository storeItemRepository;
-    BasketRepository basketRepository;
-    OrderRepository orderRepository;
-    BasketServiceImpl basketService;
-    AddressConvertor addressConvertor;
-    StoreItemConvertor storeItemConvertor;
-    OrderConvertor orderConvertor;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
-                           StoreItemRepository storeItemRepository, BasketRepository basketRepository,
-                           OrderRepository orderRepository, BasketServiceImpl basketService,
-                           AddressConvertor addressConvertor, StoreItemConvertor storeItemConvertor,
-                           OrderConvertor orderConvertor) {
-        this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
-        this.storeItemRepository = storeItemRepository;
-        this.basketRepository = basketRepository;
-        this.orderRepository = orderRepository;
-        this.basketService = basketService;
-        this.addressConvertor = addressConvertor;
-        this.storeItemConvertor = storeItemConvertor;
-        this.orderConvertor = orderConvertor;
+    public static String getRandomString() {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 25; i++) {
+            int number = random.nextInt(62);
+            sb.append(str.charAt(number));
+        }
+        return sb.toString();
     }
-
-
 
     @Override
     public List<AddressDto> getAllAddressesByUser(Integer userId) {
@@ -142,18 +131,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-
-    @Value("${bank.secret}")
-    String apiSecret;
-    @Value("${bank.url}")
-    String bankUrl;
-    @Value("${bank.controller}")
-    String controllerUrl;
-
-
     @SneakyThrows
     @Override
-    public PaymentRequest buyItems(Integer userId, Integer addressId, String accountId) {
+    @Transactional(noRollbackFor = PaymentRejected.class)
+    public CreateOrderResponse buyItems(Integer userId, Integer addressId, String accountId) {
         Address address = addressRepository.findByUserIdAndIdAndVisible(userId, addressId, true);
         if (address == null)
             throw new AddressIsNotFound("Address is not found");
@@ -169,7 +150,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         String externalId = getRandomString();
 
-        orderRepository.save(Order.builder()
+        Order order = orderRepository.save(Order.builder()
                 .externalId(externalId)
                 .user(userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found")))
                 .storeItem(storeItems)
@@ -182,13 +163,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         basketService.clearBasketByUser(userId);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.set("api-secret", apiSecret);
-
-
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .accountId(accountId)
                 .amount(Amount.builder()
@@ -200,13 +174,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .acquireWebHook(controllerUrl)
                 .build();
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        String requestJson = mapper.writeValueAsString(paymentRequest);
-
-        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
-
-        return restTemplate.postForObject(bankUrl, entity, PaymentRequest.class);
+        try {
+            PaymentResponce paymentResult = bankPaymentClient.payment(paymentRequest);
+            return CreateOrderResponse.builder()
+                    .redirectUrl(paymentResult.getAcquireWebHook())
+                    .price(order.getPrice())
+                    .build();
+        } catch (PaymentRejected e) {
+            order.setStatus(ORDER_STATUS.ERROR);
+            orderRepository.save(order);
+            throw e;
+        }
     }
 
     @Override
@@ -232,17 +210,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .build());
 
         return userdto;
-    }
-
-    public static String getRandomString() {
-        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 25; i++) {
-            int number = random.nextInt(62);
-            sb.append(str.charAt(number));
-        }
-        return sb.toString();
     }
 
     @Override

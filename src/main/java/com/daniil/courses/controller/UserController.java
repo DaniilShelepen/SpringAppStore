@@ -2,7 +2,7 @@ package com.daniil.courses.controller;
 
 import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.UserNotFound;
-import com.daniil.courses.payment.PaymentRequest;
+import com.daniil.courses.client.model.PaymentRequest;
 import com.daniil.courses.repositories.UserRepository;
 import com.daniil.courses.role_models.User;
 import com.daniil.courses.security.AccessUser;
@@ -111,7 +111,7 @@ public class UserController {
 
     @AccessUser
     @GetMapping("byeItems/{addressId}/{bankCard}")
-    public PaymentRequest byeItems(@PathVariable Integer addressId, Principal principal, @PathVariable String bankCard) {
+    public CreateOrderResponse byeItems(@PathVariable Integer addressId, Principal principal, @PathVariable String bankCard) {
         User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
         if(user == null)
             throw new UserNotFound("Sorry but you are blocked :(");

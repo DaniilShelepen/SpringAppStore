@@ -1,11 +1,10 @@
-package com.daniil.courses.payment;
+package com.daniil.courses.client.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

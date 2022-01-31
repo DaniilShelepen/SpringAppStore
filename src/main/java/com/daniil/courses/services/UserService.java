@@ -1,6 +1,6 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.payment.PaymentRequest;
+import com.daniil.courses.client.model.PaymentRequest;
 import com.daniil.courses.dto.*;
 import com.daniil.courses.dto.UserOrderDto;
 
@@ -35,7 +35,7 @@ public interface UserService {
     /**
      * купить товар
      */
-    PaymentRequest buyItems(Integer userId, Integer addressId, String accountId);
+    CreateOrderResponse buyItems(Integer userId, Integer addressId, String accountId);
 
     /**
      * получить все заказы
