@@ -9,6 +9,8 @@ import com.daniil.courses.security.AccessAdminAndManager;
 import com.daniil.courses.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/manager/")
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerController {
     private final ManagerService managerService;
     private final ManagerRepository managerRepository;
@@ -25,7 +28,9 @@ public class ManagerController {
     @PostMapping("createItem")
     @Operation(description = "Добавление нового товара")
     public ManagerStoreItemDto addNewItem(@RequestBody ManagerStoreItemDto storeItemDto, Principal principal) {
-        Manager manager = managerRepository.findByPersonalNumber(principal.getName());
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.addNewItem(storeItemDto, manager.getId());
     }
 
@@ -33,14 +38,20 @@ public class ManagerController {
     @PutMapping(value = "setAvailable/{storeItemId}/{available}")
     @Operation(description = "Установить доступ к товару")
     public void setAvailable(@PathVariable Integer storeItemId, @PathVariable boolean available, Principal principal) {
-        Manager manager = managerRepository.findByPersonalNumber(principal.getName());
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        log.warn("{}", manager);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         managerService.setAvailable(storeItemId, available, manager.getId());
     }
 
     @AccessAdminAndManager
     @GetMapping("storeItems")
     @Operation(description = "Получить весь список товаров")
-    public List<ManagerStoreItemDto> viewStoreItems() {
+    public List<ManagerStoreItemDto> viewStoreItems(Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.viewAllStoreItems();
     }
 
@@ -48,7 +59,9 @@ public class ManagerController {
     @PutMapping("refactorStoreItem/{storeItemId}")
     @Operation(description = "Редактирование товара")
     public ManagerStoreItemDto refactorStoreItem(@PathVariable Integer storeItemId, @RequestBody ManagerStoreItemDto storeItemDto, Principal principal) {
-        Manager manager = managerRepository.findByPersonalNumber(principal.getName());
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.refactorStoreItem(storeItemId, storeItemDto, manager.getId());
     }
 
@@ -56,39 +69,56 @@ public class ManagerController {
     @PutMapping("setStatus/{externalId}")
     @Operation(description = "Установить заказу следующий статус")
     public String setOrderStatus(@PathVariable String externalId, Principal principal) {
-        Manager manager = managerRepository.findByPersonalNumber(principal.getName());
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.setOrderStatus(externalId, manager.getId());
     }
 
     @AccessAdminAndManager
     @GetMapping("getUserOrders/{userId}")
     @Operation(description = "Получить все заказы пользователя")
-    public List<ManagerOrderDto> getAllUserOrders(@PathVariable Integer userId) {
+    public List<ManagerOrderDto> getAllUserOrders(@PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.getAllUserOrders(userId);
     }
 
     @AccessAdminAndManager
     @GetMapping("getAllOrders")
     @Operation(description = "Получить все заказы")
-    public List<ManagerOrderDto> getAllOrders() {
+    public List<ManagerOrderDto> getAllOrders(Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.getAllOrders();
     }
 
     @AccessAdminAndManager
     @GetMapping("getAllUsers")
-    public List<ManagerUserDto> getAllShopUsers() {
+    public List<ManagerUserDto> getAllShopUsers(Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.getAllUsers();
     }
 
     @AccessAdminAndManager
     @PutMapping("block/{userId}")
-    public String blockUser(@PathVariable Integer userId) {
+    public String blockUser(@PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.blockUser(userId);
     }
 
     @AccessAdminAndManager
     @PutMapping("unlock/{userId}")
-    public String unLockUser(@PathVariable Integer userId) {
+    public String unLockUser(@PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return managerService.unlockUser(userId);
     }
 }

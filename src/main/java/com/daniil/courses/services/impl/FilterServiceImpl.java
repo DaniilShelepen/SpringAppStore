@@ -73,7 +73,7 @@ public class FilterServiceImpl implements FilterService {
     public List<UserOrderDto> filterUserOrderByStatus(Integer userId, String orderStatuses) {
 
         return orderRepository.findAllByUserId(userId).stream()
-                .filter(order -> order.getStatus().toLowerCase().contains(orderStatuses.toLowerCase()))
+                .filter(order -> order.getStatus().toString().contains(orderStatuses.toLowerCase()))
                 .map(orderConvertor::convertForUser)
                 .collect(Collectors.toList());
     }

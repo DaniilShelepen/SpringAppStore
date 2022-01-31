@@ -2,12 +2,16 @@ package com.daniil.courses.controller;
 
 import com.daniil.courses.dto.UserOrderDto;
 import com.daniil.courses.dto.UserStoreItemDto;
+import com.daniil.courses.repositories.ManagerRepository;
+import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.security.AccessAdminAndManager;
 import com.daniil.courses.security.AccessUser;
 import com.daniil.courses.services.FilterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,6 +21,7 @@ import java.util.List;
 public class FilterController {
 
     private final FilterService filterService;
+    private final ManagerRepository managerRepository;
 
     @GetMapping("notAuthorized/type/{type}")
     public List<UserStoreItemDto> filterType(@PathVariable String type) {
@@ -50,19 +55,28 @@ public class FilterController {
 
     @AccessAdminAndManager
     @GetMapping("{userId}/{orderStatuses}")
-    public List<UserOrderDto> filterUserStatus(@PathVariable String orderStatuses, @PathVariable Integer userId) {
+    public List<UserOrderDto> filterUserStatus(@PathVariable String orderStatuses, @PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return filterService.filterUserOrderByStatus(userId, orderStatuses);
     }
 
     @AccessAdminAndManager
     @GetMapping("{userId}/new")
-    public List<UserOrderDto> filterOrderNew(@PathVariable Integer userId) {
+    public List<UserOrderDto> filterOrderNew(@PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return filterService.filterUserOrderByDateNew(userId);
     }
 
     @AccessAdminAndManager
     @GetMapping("{userId}/old")
-    public List<UserOrderDto> filterOrderOld(@PathVariable Integer userId) {
+    public List<UserOrderDto> filterOrderOld(@PathVariable Integer userId, Principal principal) {
+        Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
+        if (manager == null)
+            throw new UsernameNotFoundException("");
         return filterService.filterUserOrderByDateOld(userId);
     }
 }

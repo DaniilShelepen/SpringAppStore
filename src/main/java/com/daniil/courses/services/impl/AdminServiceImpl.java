@@ -34,19 +34,22 @@ public class AdminServiceImpl implements AdminService {
                 .userName(managerDto.getUserName())
                 .password(new BCryptPasswordEncoder().encode(managerDto.getPassword()))
                 .personalNumber(managerDto.getPersonalNumber())
+                .deleted(false)
                 .build());
         return managerDto;
     }
 
     @Override
     public List<ManagerDto> getAllManagers() {
-        return managerRepository.findAll().stream()
+        return managerRepository.findAllByDeleted(false).stream()
                 .map(managerConvertor::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deleteManager(Integer managerId) {
-        managerRepository.deleteById(managerId);
+       Manager manager =  managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
+       manager.setDeleted(true);
+       managerRepository.save(manager);
     }
 }

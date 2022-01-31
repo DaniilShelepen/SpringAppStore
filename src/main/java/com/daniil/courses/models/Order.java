@@ -24,7 +24,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    protected String status;
+    protected ORDER_STATUS status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
     @LastModifiedDate

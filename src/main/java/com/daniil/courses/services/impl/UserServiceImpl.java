@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .date(LocalDate.now())
                 .dateOfRefactoring(new Date())
                 .price(price)
-                .status(ORDER_STATUS.AWAITING_OF_CONFIRM.getDescription())
+                .status(ORDER_STATUS.AWAITING_OF_CONFIRM)
                 .build());
 
         basketService.clearBasketByUser(userId);

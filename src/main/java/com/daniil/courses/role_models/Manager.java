@@ -21,5 +21,6 @@ public class Manager {
     protected String userName;
     protected String password;
     protected String personalNumber;
+    protected boolean deleted;
 
 }

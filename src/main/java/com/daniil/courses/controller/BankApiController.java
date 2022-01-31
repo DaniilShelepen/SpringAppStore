@@ -2,7 +2,9 @@ package com.daniil.courses.controller;
 
 import com.daniil.courses.payment.WebHookAcquireRequest;
 import com.daniil.courses.models.Order;
+import com.daniil.courses.payment.WebHookAcquireSuccessRequest;
 import com.daniil.courses.repositories.OrderRepository;
+import com.daniil.courses.services.ORDER_STATUS;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("api/bank/")
 @RequiredArgsConstructor
+@Slf4j
 public class BankApiController {
 
     OrderRepository orderRepository;
@@ -32,7 +35,9 @@ public class BankApiController {
     @PostMapping("getanswer")
     public void getAnswer(@RequestBody WebHookAcquireRequest webHookAcquireRequest) {
         Order order = orderRepository.findByExternalId(webHookAcquireRequest.getExternalId());
-        order.setStatus(webHookAcquireRequest.getDescription());
+        if (webHookAcquireRequest instanceof WebHookAcquireSuccessRequest)
+            order.setStatus(ORDER_STATUS.CONFIRMED);
+        else order.setStatus(ORDER_STATUS.ERROR);
         order.setDateOfRefactoring(new Date());
         orderRepository.save(order);
 

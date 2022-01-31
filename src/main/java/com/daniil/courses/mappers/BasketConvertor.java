@@ -1,21 +1,19 @@
 package com.daniil.courses.mappers;
 
-import com.daniil.courses.dto.AddressDto;
 import com.daniil.courses.dto.BasketDto;
-import com.daniil.courses.models.Address;
 import com.daniil.courses.models.Basket;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BasketConvertor {
-    private final ModelMapper mapper;
+    private final ItemConvertor itemConvertor;
 
-    public BasketConvertor() {
-        this.mapper = new ModelMapper();
+    public BasketConvertor(ItemConvertor itemConvertor) {
+        this.itemConvertor = itemConvertor;
     }
 
     public BasketDto convert(Basket basket) {
-        return mapper.map(basket, BasketDto.class);
+        return new BasketDto(itemConvertor.convert(basket.getStoreItem().getItem())
+                , basket.getCount(), basket.getPrice());
     }
 }

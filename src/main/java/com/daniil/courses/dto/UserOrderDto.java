@@ -1,5 +1,6 @@
 package com.daniil.courses.dto;
 
+import com.daniil.courses.services.ORDER_STATUS;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +19,7 @@ import java.util.List;
 public class UserOrderDto {
     protected Integer id;
     @NotBlank
-    protected String status;
+    protected ORDER_STATUS status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
     protected Date dateOfRefactoring;

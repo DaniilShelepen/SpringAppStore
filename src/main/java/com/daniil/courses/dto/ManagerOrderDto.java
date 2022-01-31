@@ -1,6 +1,7 @@
 package com.daniil.courses.dto;
 
 import com.daniil.courses.role_models.Manager;
+import com.daniil.courses.services.ORDER_STATUS;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,12 +19,12 @@ import java.util.List;
 public class ManagerOrderDto {
     protected Integer id;
     @NotBlank
-    protected String status;
+    protected ORDER_STATUS status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
     protected LocalDate date;
     protected Date dateOfRefactoring;
     protected BigDecimal price;
-    protected UserDto user;
+    protected ManagerUserDto user;
     protected AddressDto address;
     protected String externalId;
     protected List<String> items;

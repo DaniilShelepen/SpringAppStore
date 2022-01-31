@@ -120,16 +120,16 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
         if (order == null)
             throw new RuntimeException();
 
-        List<String> orderStatus = List.of(
-                ORDER_STATUS.CONFIRMED.getDescription(),
-                ORDER_STATUS.AWAITING_OF_DELIVERY.getDescription(),
-                ORDER_STATUS.DELIVERED.getDescription()
+        List<ORDER_STATUS> orderStatus = List.of(
+                ORDER_STATUS.CONFIRMED,
+                ORDER_STATUS.AWAITING_OF_DELIVERY,
+                ORDER_STATUS.DELIVERED
         );
 
-        if (order.getStatus().equals(ORDER_STATUS.AWAITING_OF_CONFIRM.getDescription()) || order.getStatus() == null)
+        if (order.getStatus().equals(ORDER_STATUS.AWAITING_OF_CONFIRM) || order.getStatus().equals(ORDER_STATUS.ERROR))
             return "Вы не можете изменить статус заказа!";
 
-        String updateStatus;
+        ORDER_STATUS updateStatus;
         try {
             updateStatus = orderStatus.get(orderStatus.indexOf(order.getStatus()) + 1);
         } catch (Exception e) {
