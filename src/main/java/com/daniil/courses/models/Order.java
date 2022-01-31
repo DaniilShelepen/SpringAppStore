@@ -2,9 +2,10 @@ package com.daniil.courses.models;
 
 import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
-import com.daniil.courses.services.ORDER_STATUS;
+import com.daniil.courses.dto.ORDER_STATUS;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,5 +43,6 @@ public class Order {
     List<StoreItem> storeItem;
     @ManyToOne
     @JoinColumn(name = "refactor_by")
+    @LastModifiedBy
     private Manager manager;
 }

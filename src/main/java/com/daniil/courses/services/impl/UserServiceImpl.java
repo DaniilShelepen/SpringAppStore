@@ -1,9 +1,5 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.client.BankPaymentClient;
-import com.daniil.courses.client.model.Amount;
-import com.daniil.courses.client.model.PaymentRequest;
-import com.daniil.courses.client.model.PaymentResponce;
 import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.*;
 import com.daniil.courses.mappers.AddressConvertor;
@@ -15,15 +11,11 @@ import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.role_models.User;
-import com.daniil.courses.security.Roles;
-import com.daniil.courses.services.ORDER_STATUS;
+import com.daniil.courses.services.PaymentService;
 import com.daniil.courses.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
@@ -49,10 +41,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final AddressConvertor addressConvertor;
     private final StoreItemConvertor storeItemConvertor;
     private final OrderConvertor orderConvertor;
-    private final BankPaymentClient bankPaymentClient;
-    private String apiSecret;
-    private String bankUrl;
-    private String controllerUrl;
+    private final PaymentService paymentService;
+
+
 
     public static String getRandomString() {
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -163,28 +154,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         basketService.clearBasketByUser(userId);
 
-        PaymentRequest paymentRequest = PaymentRequest.builder()
-                .accountId(accountId)
-                .amount(Amount.builder()
-                        .currency("USD")
-                        .value(price)
-                        .build())
-                .externalId(externalId)
-                .purpose("Payment")
-                .acquireWebHook(controllerUrl)
-                .build();
-
-        try {
-            PaymentResponce paymentResult = bankPaymentClient.payment(paymentRequest);
-            return CreateOrderResponse.builder()
-                    .redirectUrl(paymentResult.getAcquireWebHook())
-                    .price(order.getPrice())
-                    .build();
-        } catch (PaymentRejected e) {
-            order.setStatus(ORDER_STATUS.ERROR);
-            orderRepository.save(order);
-            throw e;
-        }
+        return paymentService.payToBank(order,accountId);
     }
 
     @Override
@@ -212,18 +182,4 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userdto;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-
-        User DBUser = userRepository.findByPhoneNumber(phoneNumber);
-
-        if (DBUser == null)
-            throw new UsernameNotFoundException("User is not found");
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(DBUser.getPhoneNumber())
-                .password(DBUser.getPassword())
-                .roles(Roles.USER.toString())
-                .build();
-    }
 }

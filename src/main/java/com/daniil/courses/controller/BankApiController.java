@@ -4,18 +4,16 @@ import com.daniil.courses.payment.WebHookAcquireRequest;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.payment.WebHookAcquireSuccessRequest;
 import com.daniil.courses.repositories.OrderRepository;
-import com.daniil.courses.services.ORDER_STATUS;
+import com.daniil.courses.dto.ORDER_STATUS;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.Date;
 
 @Hidden

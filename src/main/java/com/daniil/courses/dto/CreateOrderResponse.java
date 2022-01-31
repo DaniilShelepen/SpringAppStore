@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class CreateOrderResponse {
-    private String redirectUrl;
+    private String paymentConfirmationUrl;
     private BigDecimal price;
+
 }

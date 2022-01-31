@@ -16,6 +16,5 @@ public class PaymentRequest {
     protected Amount amount;
     protected String purpose;
     protected String acquireWebHook;
-    protected String paymentConfirmationRedirectUrl;
 
 }

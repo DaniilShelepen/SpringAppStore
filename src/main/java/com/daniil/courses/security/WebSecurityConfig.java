@@ -26,15 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 )
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserServiceImpl userService;
-    private ManagerServiceImpl managerService;
-
-    @Autowired
-    public WebSecurityConfig(ManagerServiceImpl managerService,UserServiceImpl userService) {
-        this.userService = userService;
-        this.managerService = managerService;
-    }
-
+    private final ManagerDetailsServiceImpl managerDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -67,8 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .password(passwordEncoder().encode(password))
                 .roles(Roles.ADMIN.toString());
 
-        auth.userDetailsService(userService);
-        auth.userDetailsService(managerService);
+        auth.userDetailsService(userDetailsService);
+        auth.userDetailsService(managerDetailsService);
 
     }
 

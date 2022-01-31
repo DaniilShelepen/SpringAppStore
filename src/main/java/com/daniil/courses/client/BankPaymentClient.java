@@ -1,8 +1,8 @@
 package com.daniil.courses.client;
 
 import com.daniil.courses.client.model.PaymentRequest;
-import com.daniil.courses.client.model.PaymentResponce;
+import com.daniil.courses.client.model.PaymentResponse;
 
 public interface BankPaymentClient {
-    PaymentResponce payment(PaymentRequest paymentRequest);
+    PaymentResponse payment(PaymentRequest paymentRequest);
 }

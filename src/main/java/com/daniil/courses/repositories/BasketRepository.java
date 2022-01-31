@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface BasketRepository extends JpaRepository<Basket, Integer> {
-    List<Basket> findBasketByUserId(Integer user_id);
-    Basket findByUserId(Integer user_id);
+    List<Basket> findBasketByUserId(Integer userId);
+
+    List<Basket> findAllByUserId(Integer userId);
 
     @Modifying
     void deleteByStoreItemIdAndUserId(Integer storeItemId, Integer userId);

@@ -9,4 +9,5 @@ public class BankPaymentProperty {
     private String account;
     private String secret;
     private String url;
+    private String controllerURL;
 }

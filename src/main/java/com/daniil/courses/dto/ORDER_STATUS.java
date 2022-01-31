@@ -1,4 +1,4 @@
-package com.daniil.courses.services;
+package com.daniil.courses.dto;
 
 public enum ORDER_STATUS {
     ERROR,

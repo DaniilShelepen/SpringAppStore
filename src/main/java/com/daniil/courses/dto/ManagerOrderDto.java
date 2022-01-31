@@ -1,7 +1,6 @@
 package com.daniil.courses.dto;
 
 import com.daniil.courses.role_models.Manager;
-import com.daniil.courses.services.ORDER_STATUS;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;

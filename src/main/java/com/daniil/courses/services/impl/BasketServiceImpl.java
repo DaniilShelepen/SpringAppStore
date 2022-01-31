@@ -1,16 +1,16 @@
 package com.daniil.courses.services.impl;
 
 import com.daniil.courses.dto.BasketDto;
-import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.exceptions.BasketIsEmpty;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.mappers.BasketConvertor;
+import com.daniil.courses.mappers.impl.BasketConvertorImpl;
 import com.daniil.courses.models.Basket;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
 import com.daniil.courses.services.BasketService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,27 +18,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BasketServiceImpl implements BasketService {
 
 
-    UserRepository userRepository;
-    AddressRepository addressRepository;
-    StoreItemRepository storeItemRepository;
-    BasketRepository basketRepository;
-    OrderRepository orderRepository;
-    BasketConvertor basketConvertor;
+    private final UserRepository userRepository;
+    private final StoreItemRepository storeItemRepository;
+    private final BasketRepository basketRepository;
+    private final BasketConvertor basketConvertor;
 
-    @Autowired
-    public BasketServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
-                             StoreItemRepository storeItemRepository, BasketRepository basketRepository,
-                             OrderRepository orderRepository,BasketConvertor basketConvertor) {
-        this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
-        this.storeItemRepository = storeItemRepository;
-        this.basketRepository = basketRepository;
-        this.orderRepository = orderRepository;
-        this.basketConvertor = basketConvertor;
-    }
 
     @Override
     public List<BasketDto> getBasketByUser(Integer userId) {

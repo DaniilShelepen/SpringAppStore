@@ -1,13 +1,12 @@
 package com.daniil.courses.services.impl;
 
 import com.daniil.courses.dto.ManagerDto;
-import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.exceptions.ManagerIsAlreadyExists;
 import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.mappers.ManagerConvertor;
+import com.daniil.courses.mappers.impl.ManagerConvertorImpl;
 import com.daniil.courses.repositories.ManagerRepository;
 import com.daniil.courses.role_models.Manager;
-import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,8 +26,9 @@ public class AdminServiceImpl implements AdminService {
     public ManagerDto createManager(ManagerDto managerDto) {
 
         Manager manager = managerRepository.findByPersonalNumber(managerDto.getPersonalNumber());
+
         if (manager != null)
-            throw new ManagerIsAlreadyExists("Manager is already exist");
+            throw new ManagerIsAlreadyExists("Manager already exist or deleted");
 
         managerRepository.save(Manager.builder()
                 .userName(managerDto.getUserName())

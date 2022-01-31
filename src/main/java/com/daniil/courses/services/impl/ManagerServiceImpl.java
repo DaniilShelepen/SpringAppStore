@@ -1,6 +1,9 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.dto.*;
+import com.daniil.courses.dto.ManagerOrderDto;
+import com.daniil.courses.dto.ManagerStoreItemDto;
+import com.daniil.courses.dto.ManagerUserDto;
+import com.daniil.courses.dto.ORDER_STATUS;
 import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
@@ -11,15 +14,9 @@ import com.daniil.courses.models.Item;
 import com.daniil.courses.models.Order;
 import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.*;
-import com.daniil.courses.role_models.Manager;
 import com.daniil.courses.role_models.User;
-import com.daniil.courses.security.Roles;
 import com.daniil.courses.services.ManagerService;
-import com.daniil.courses.services.ORDER_STATUS;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,32 +24,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ManagerServiceImpl implements ManagerService, UserDetailsService {
+@RequiredArgsConstructor
+public class ManagerServiceImpl implements ManagerService {
 
-    ItemRepository itemRepository;
-    ManagerRepository managerRepository;
-    StoreItemRepository storeItemRepository;
-    OrderRepository orderRepository;
-    UserRepository userRepository;
-    OrderConvertor orderConvertor;
-    StoreItemConvertor storeItemConvertor;
-    UserConvertor userConvertor;
-
-    @Autowired
-    public ManagerServiceImpl(ItemRepository itemRepository, ManagerRepository managerRepository,
-                              StoreItemRepository storeItemRepository, OrderRepository orderRepository,
-                              UserRepository userRepository, OrderConvertor orderConvertor,
-                              StoreItemConvertor storeItemConvertor, UserConvertor userConvertor) {
-        this.itemRepository = itemRepository;
-        this.managerRepository = managerRepository;
-        this.storeItemRepository = storeItemRepository;
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.orderConvertor = orderConvertor;
-        this.storeItemConvertor = storeItemConvertor;
-        this.userConvertor = userConvertor;
-    }
-
+    private final ItemRepository itemRepository;
+    private final ManagerRepository managerRepository;
+    private final StoreItemRepository storeItemRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final OrderConvertor orderConvertor;
+    private final StoreItemConvertor storeItemConvertor;
+    private final UserConvertor userConvertor;
 
 
     @Override
@@ -137,8 +119,7 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
         }
 
         order.setStatus(updateStatus);
-        order.setDateOfRefactoring(new Date());
-        order.setManager(managerRepository.findById(managerId).orElseThrow());
+        //order.setManager(managerRepository.findById(managerId).orElseThrow());//todo
 
         orderRepository.save(order);
 
@@ -187,20 +168,4 @@ public class ManagerServiceImpl implements ManagerService, UserDetailsService {
         userRepository.save(user);
         return user.getName() + " unblocked!";
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String personalNumber) throws UsernameNotFoundException {
-
-        Manager DBManager = managerRepository.findByPersonalNumber(personalNumber);
-
-        if (DBManager == null)
-            throw new ManagerNotFound("Manager is not found");
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(DBManager.getPersonalNumber())
-                .password(DBManager.getPassword())
-                .roles(Roles.MANAGER.toString())
-                .build();
     }
-
-}

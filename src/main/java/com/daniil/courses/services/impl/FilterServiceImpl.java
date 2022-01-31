@@ -9,7 +9,7 @@ import com.daniil.courses.models.StoreItem;
 import com.daniil.courses.repositories.OrderRepository;
 import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.services.FilterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,21 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilterServiceImpl implements FilterService {
 
-    StoreItemRepository storeItemRepository;
-    OrderRepository orderRepository;
-    StoreItemConvertor storeItemConvertor;
-    OrderConvertor orderConvertor;
-
-    @Autowired
-    public FilterServiceImpl(OrderConvertor orderConvertor,StoreItemConvertor storeItemConvertor,StoreItemRepository storeItemRepository, OrderRepository orderRepository) {
-        this.storeItemRepository = storeItemRepository;
-        this.orderRepository = orderRepository;
-        this.storeItemConvertor = storeItemConvertor;
-        this.orderConvertor = orderConvertor;
-    }
-
+    private final StoreItemRepository storeItemRepository;
+    private final OrderRepository orderRepository;
+    private final StoreItemConvertor storeItemConvertor;
+    private final OrderConvertor orderConvertor;
 
     @Override
     public List<UserStoreItemDto> getAllItemsWithType(String type) {
