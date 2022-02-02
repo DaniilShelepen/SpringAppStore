@@ -1,6 +1,7 @@
 package com.daniil.courses.mappers.impl;
 
 import com.daniil.courses.dto.ManagerUserDto;
+import com.daniil.courses.dto.UserDto;
 import com.daniil.courses.mappers.UserConvertor;
 import com.daniil.courses.dal.entity.User;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,11 @@ public class UserConvertorImpl implements UserConvertor {
         user.setPassword(null);
         return mapper.map(user, ManagerUserDto.class);
     }
+
+    @Override
+    public UserDto convertForUser(User user) {
+        user.setPassword(null);
+        return mapper.map(user, UserDto.class);    }
 
 
 }

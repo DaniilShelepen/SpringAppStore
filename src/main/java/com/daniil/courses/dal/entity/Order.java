@@ -45,7 +45,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER)//тут не ван ту мени но я и сюда пытался впихивать
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)//тут не ван ту мени но я и сюда пытался впихивать
     Set<StoreItem> storeItem;
 
     @ManyToOne(fetch = FetchType.EAGER)

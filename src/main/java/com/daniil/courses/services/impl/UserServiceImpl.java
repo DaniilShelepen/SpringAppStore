@@ -7,6 +7,7 @@ import com.daniil.courses.exceptions.*;
 import com.daniil.courses.mappers.AddressConvertor;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
+import com.daniil.courses.mappers.UserConvertor;
 import com.daniil.courses.services.PaymentService;
 import com.daniil.courses.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private final StoreItemConvertor storeItemConvertor;
     private final OrderConvertor orderConvertor;
     private final PaymentService paymentService;
-
+    private final UserConvertor userConvertor;
 
 
     public static String getRandomString() {
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         user.setAddresses(Set.of(newAddress));
         addressRepository.save(newAddress);
-        return addressdto;
+        return addressConvertor.convert(newAddress);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
         changedAddress.setVisible(false);
         addressRepository.save(changedAddress);
 
-        addressRepository.save(Address.builder()
+        Address address = Address.builder()
                 .user(changedAddress.getUser())
                 .city(addressDto.getCity())
                 .street(addressDto.getStreet())
@@ -106,9 +107,10 @@ public class UserServiceImpl implements UserService {
                 .floor(addressDto.getFloor())
                 .entrance(addressDto.getEntrance())
                 .visible(true)
-                .build());
+                .build();
+        addressRepository.save(address);
 
-        return addressDto;
+        return addressConvertor.convert(address);
     }
 
     @Override
@@ -151,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
         basketService.clearBasketByUser(userId);
 
-        return paymentService.payToBank(order,accountId);
+        return paymentService.payToBank(order, accountId);
     }
 
     @Override
@@ -167,16 +169,18 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByPhoneNumber(userdto.getPhoneNumber()) != null)
             throw new UserAlreadyExist("User with this phone number already exist!");
 
-        userRepository.save(User.builder()
+        User user = User.builder()
                 .name(userdto.getName())
                 .surname(userdto.getSurname())
                 .birthday(userdto.getBirthday())
                 .password(new BCryptPasswordEncoder().encode(userdto.getPassword()))
                 .phoneNumber(userdto.getPhoneNumber())
                 .available(true)
-                .build());
+                .build();
 
-        return userdto;
+        userRepository.save(user);
+
+        return userConvertor.convertForUser(user);
     }
 
 }

@@ -60,8 +60,7 @@ public class ManagerServiceImpl implements ManagerService {
         itemRepository.save(item);
         storeItemRepository.save(storeItem);
 
-        return storeItemRepository.findById(storeItem.getId()).stream()
-                .map(storeItemConvertor::convertForManager).findFirst().orElseThrow();
+        return storeItemConvertor.convertForManager(storeItem);
 
     }
 

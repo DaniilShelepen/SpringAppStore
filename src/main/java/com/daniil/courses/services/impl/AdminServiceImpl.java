@@ -28,14 +28,16 @@ public class AdminServiceImpl implements AdminService {
 
         if (manager != null)
             throw new ManagerIsAlreadyExists("Manager already exist or deleted");
-
-        managerRepository.save(Manager.builder()
+        Manager newManager = Manager.builder()
                 .userName(managerDto.getUserName())
                 .password(new BCryptPasswordEncoder().encode(managerDto.getPassword()))
                 .personalNumber(managerDto.getPersonalNumber())
                 .deleted(false)
-                .build());
-        return managerDto;
+                .build();
+
+        managerRepository.save(newManager);
+
+        return managerConvertor.convert(newManager);
     }
 
     @Override
@@ -47,8 +49,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteManager(Integer managerId) {
-       Manager manager =  managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
-       manager.setDeleted(true);
-       managerRepository.save(manager);
+        Manager manager = managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found"));
+        manager.setDeleted(true);
+        managerRepository.save(manager);
     }
 }

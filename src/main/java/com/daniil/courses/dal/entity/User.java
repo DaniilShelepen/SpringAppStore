@@ -35,17 +35,17 @@ public class User {
     boolean available;
 
     @LazyCollection(LazyCollectionOption.TRUE)
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)//fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.LAZY)//fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
     @ToString.Exclude
     Set<Order> orders = new HashSet<>();
 
     @LazyCollection(LazyCollectionOption.TRUE)
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)//fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.EAGER)//fetch = FetchType.EAGER,
     @ToString.Exclude
     Set<Address> addresses = new HashSet<>();
 
     @LazyCollection(LazyCollectionOption.TRUE)
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL},orphanRemoval = true)// fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL},orphanRemoval = true,fetch = FetchType.LAZY)// fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
     @ToString.Exclude
     Set<Basket> basket = new HashSet<>();
 
