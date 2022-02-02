@@ -133,8 +133,8 @@ public class UserServiceImpl implements UserService {
 
         BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basketItem -> Double.parseDouble(basketItem.getPrice().toString())).sum());
 
-        List<StoreItem> storeItems = basketList.stream()
-                .map(Basket::getStoreItem).collect(Collectors.toList());
+        Set<StoreItem> storeItems = basketList.stream()
+                .map(Basket::getStoreItem).collect(Collectors.toSet());
 
         String externalId = getRandomString();
 

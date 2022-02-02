@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,17 +37,17 @@ public class User {
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)//fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
     @ToString.Exclude
-    Set<Order> orders;
+    Set<Order> orders = new HashSet<>();
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)//fetch = FetchType.EAGER,
     @ToString.Exclude
-    Set<Address> addresses;
+    Set<Address> addresses = new HashSet<>();
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL},orphanRemoval = true)// fetch = FetchType.LAZY, //если игоря поставишь то будет ошибка
     @ToString.Exclude
-    Set<Basket> basket;
+    Set<Basket> basket = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

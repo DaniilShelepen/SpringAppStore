@@ -4,7 +4,10 @@ import com.daniil.courses.dal.entity.Item;
 import com.daniil.courses.dal.entity.Order;
 import com.daniil.courses.dal.entity.StoreItem;
 import com.daniil.courses.dal.entity.User;
-import com.daniil.courses.dal.repositories.*;
+import com.daniil.courses.dal.repositories.ItemRepository;
+import com.daniil.courses.dal.repositories.OrderRepository;
+import com.daniil.courses.dal.repositories.StoreItemRepository;
+import com.daniil.courses.dal.repositories.UserRepository;
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.ManagerUserDto;
@@ -27,7 +30,6 @@ import java.util.stream.Collectors;
 public class ManagerServiceImpl implements ManagerService {
 
     private final ItemRepository itemRepository;
-    private final ManagerRepository managerRepository;
     private final StoreItemRepository storeItemRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -116,8 +118,11 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         order.setStatus(updateStatus);
+
         //так ругается на стор айтем, потом на адрес, потом на User.Address
         //а дальше я не продвинулся
+
+
         orderRepository.save(order);//todo тут херня Found shared references to a collection: com.daniil.courses.dal.entity.Order.storeItem
 
         return "Статус изменён на: " + updateStatus;

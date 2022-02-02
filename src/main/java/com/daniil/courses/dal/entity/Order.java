@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -47,9 +45,8 @@ public class Order {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany(fetch = FetchType.EAGER)//тут не ван ту мени но я и сюда пытался впихивать
-    List<StoreItem> storeItem;
+    Set<StoreItem> storeItem;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "refactor_by")
