@@ -1,8 +1,8 @@
 package com.daniil.courses.security;
 
 
-import com.daniil.courses.repositories.UserRepository;
-import com.daniil.courses.role_models.User;
+import com.daniil.courses.dal.repositories.UserRepository;
+import com.daniil.courses.dal.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;

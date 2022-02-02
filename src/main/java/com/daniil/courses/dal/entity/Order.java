@@ -1,9 +1,10 @@
-package com.daniil.courses.models;
+package com.daniil.courses.dal.entity;
 
-import com.daniil.courses.role_models.Manager;
-import com.daniil.courses.role_models.User;
 import com.daniil.courses.dto.ORDER_STATUS;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -28,20 +29,24 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Enumerated(EnumType.STRING)
-    protected ORDER_STATUS status;
+    private ORDER_STATUS status;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
-    protected LocalDate date;
+    private LocalDate date;
     @LastModifiedDate
-    protected Date dateOfRefactoring;
-    protected BigDecimal price;
-    protected String externalId;
-    @ManyToOne
-    protected Address address;
+    private Date dateOfRefactoring;
+    private BigDecimal price;
+    private String externalId;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    protected User user;
+    private Address address;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
+
     @ManyToMany(fetch = FetchType.EAGER)
     List<StoreItem> storeItem;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "refactor_by")
     @LastModifiedBy
     private Manager manager;

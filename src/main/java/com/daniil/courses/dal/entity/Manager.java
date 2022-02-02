@@ -1,4 +1,4 @@
-package com.daniil.courses.role_models;
+package com.daniil.courses.dal.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,9 +18,9 @@ public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    protected String userName;
-    protected String password;
-    protected String personalNumber;
-    protected boolean deleted;
+    private String userName;
+    private String password;
+    private String personalNumber;
+    private boolean deleted;
 
 }

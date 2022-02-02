@@ -1,9 +1,9 @@
-package com.daniil.courses.role_models;
+package com.daniil.courses.dal.entity;
 
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Basket;
-import com.daniil.courses.models.Order;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,23 +19,23 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    protected String name;
-    protected String surname;
-    protected String password;
-    // @Pattern(value = "^1([345789])\\d{9}$")
-    @NotBlank(message = "Номер телефона не может быть пустым")
-    protected String phoneNumber;
-    @DateTimeFormat(pattern = "dd.MM.yyyy")
-    protected LocalDate birthday;
-    boolean available;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String name;
+    private String surname;
+    private String password;
+    // @Pattern(value = "^1([345789])\\d{9}$")
+    @NotBlank(message = "Номер телефона не может быть пустым")
+    private String phoneNumber;
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
+    private LocalDate birthday;
+    boolean available;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     List<Order> orders;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     List<Address> addresses;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)

@@ -1,15 +1,14 @@
-package com.daniil.courses.models;
+package com.daniil.courses.dal.entity;
 
 
-import com.daniil.courses.role_models.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -17,18 +16,22 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+
 public class Basket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     User user;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_item_id")
     StoreItem storeItem;
-    protected long count;
-    protected BigDecimal price;
+
+    private long count;
+    private BigDecimal price;
 
 }
 

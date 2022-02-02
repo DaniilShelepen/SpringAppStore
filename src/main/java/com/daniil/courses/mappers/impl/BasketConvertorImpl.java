@@ -2,7 +2,7 @@ package com.daniil.courses.mappers.impl;
 
 import com.daniil.courses.dto.BasketDto;
 import com.daniil.courses.mappers.BasketConvertor;
-import com.daniil.courses.models.Basket;
+import com.daniil.courses.dal.entity.Basket;
 import org.springframework.stereotype.Component;
 
 @Component

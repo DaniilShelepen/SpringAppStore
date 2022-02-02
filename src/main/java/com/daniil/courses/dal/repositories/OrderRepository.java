@@ -1,7 +1,7 @@
-package com.daniil.courses.repositories;
+package com.daniil.courses.dal.repositories;
 
-import com.daniil.courses.models.Order;
-import com.daniil.courses.role_models.User;
+import com.daniil.courses.dal.entity.Order;
+import com.daniil.courses.dal.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

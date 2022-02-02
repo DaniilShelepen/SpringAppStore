@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EntityScan({"com.daniil.courses.models", "com.daniil.courses.role_models"})
+@EntityScan("com.daniil.courses.dal.entity")
 public class FinalApplication {
     public static void main(String[] args) {
         SpringApplication.run(FinalApplication.class, args);
@@ -19,6 +19,7 @@ public class FinalApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }
 
 

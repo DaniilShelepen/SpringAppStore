@@ -2,9 +2,7 @@ package com.daniil.courses.mappers;
 
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.UserOrderDto;
-import com.daniil.courses.models.Order;
-
-import java.util.stream.Collectors;
+import com.daniil.courses.dal.entity.Order;
 
 public interface OrderConvertor {
 

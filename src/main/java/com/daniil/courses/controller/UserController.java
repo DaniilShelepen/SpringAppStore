@@ -2,9 +2,8 @@ package com.daniil.courses.controller;
 
 import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.UserNotFound;
-import com.daniil.courses.client.model.PaymentRequest;
-import com.daniil.courses.repositories.UserRepository;
-import com.daniil.courses.role_models.User;
+import com.daniil.courses.dal.repositories.UserRepository;
+import com.daniil.courses.dal.entity.User;
 import com.daniil.courses.security.AccessUser;
 import com.daniil.courses.services.BasketService;
 import com.daniil.courses.services.UserService;

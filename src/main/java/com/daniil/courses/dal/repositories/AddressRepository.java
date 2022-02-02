@@ -1,12 +1,11 @@
-package com.daniil.courses.repositories;
+package com.daniil.courses.dal.repositories;
 
 
-import com.daniil.courses.models.Address;
+import com.daniil.courses.dal.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {

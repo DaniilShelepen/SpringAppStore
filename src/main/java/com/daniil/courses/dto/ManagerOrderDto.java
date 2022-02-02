@@ -1,6 +1,6 @@
 package com.daniil.courses.dto;
 
-import com.daniil.courses.role_models.Manager;
+import com.daniil.courses.dal.entity.Manager;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;

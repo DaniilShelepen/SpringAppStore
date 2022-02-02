@@ -1,8 +1,8 @@
-package com.daniil.courses.repositories;
+package com.daniil.courses.dal.repositories;
 
-import com.daniil.courses.role_models.Manager;
+import com.daniil.courses.dal.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 public interface ManagerRepository extends JpaRepository<Manager, Integer> {

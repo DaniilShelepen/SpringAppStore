@@ -1,16 +1,12 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dal.entity.*;
+import com.daniil.courses.dal.repositories.*;
 import com.daniil.courses.dto.*;
 import com.daniil.courses.exceptions.*;
 import com.daniil.courses.mappers.AddressConvertor;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Basket;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.*;
-import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.PaymentService;
 import com.daniil.courses.services.UserService;
 import lombok.RequiredArgsConstructor;

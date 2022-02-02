@@ -3,9 +3,7 @@ package com.daniil.courses.mappers.impl;
 import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.UserStoreItemDto;
 import com.daniil.courses.mappers.StoreItemConvertor;
-import com.daniil.courses.mappers.impl.ItemConvertorImpl;
-import com.daniil.courses.mappers.impl.ManagerConvertorImpl;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.dal.entity.StoreItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -2,7 +2,7 @@ package com.daniil.courses.mappers.impl;
 
 import com.daniil.courses.dto.ManagerDto;
 import com.daniil.courses.mappers.ManagerConvertor;
-import com.daniil.courses.role_models.Manager;
+import com.daniil.courses.dal.entity.Manager;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

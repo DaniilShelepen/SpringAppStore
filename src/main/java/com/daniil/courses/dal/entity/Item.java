@@ -1,4 +1,4 @@
-package com.daniil.courses.models;
+package com.daniil.courses.dal.entity;
 
 
 import lombok.*;
@@ -22,14 +22,14 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    protected String name;
-    protected String description;
-    protected String type;
-    protected String driverConfiguration;
-    protected String CPU;
+    private String name;
+    private String description;
+    private String type;
+    private String driverConfiguration;
+    private String CPU;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
-    protected LocalDate releaseDate;
-    protected boolean available;
+    private LocalDate releaseDate;
+    private boolean available;
 
 
 }

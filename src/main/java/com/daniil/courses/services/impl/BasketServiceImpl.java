@@ -1,14 +1,15 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dal.repositories.BasketRepository;
+import com.daniil.courses.dal.repositories.StoreItemRepository;
+import com.daniil.courses.dal.repositories.UserRepository;
 import com.daniil.courses.dto.BasketDto;
 import com.daniil.courses.exceptions.BasketIsEmpty;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.mappers.BasketConvertor;
-import com.daniil.courses.mappers.impl.BasketConvertorImpl;
-import com.daniil.courses.models.Basket;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.*;
+import com.daniil.courses.dal.entity.Basket;
+import com.daniil.courses.dal.entity.StoreItem;
 import com.daniil.courses.services.BasketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

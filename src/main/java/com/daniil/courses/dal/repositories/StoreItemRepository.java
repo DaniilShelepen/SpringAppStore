@@ -1,10 +1,8 @@
-package com.daniil.courses.repositories;
+package com.daniil.courses.dal.repositories;
 
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.dal.entity.StoreItem;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface StoreItemRepository extends JpaRepository<StoreItem, Integer> {

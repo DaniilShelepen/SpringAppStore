@@ -3,8 +3,8 @@ package com.daniil.courses.controller;
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.ManagerUserDto;
-import com.daniil.courses.repositories.ManagerRepository;
-import com.daniil.courses.role_models.Manager;
+import com.daniil.courses.dal.repositories.ManagerRepository;
+import com.daniil.courses.dal.entity.Manager;
 import com.daniil.courses.security.AccessAdminAndManager;
 import com.daniil.courses.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,6 +97,7 @@ public class ManagerController {
 
     @AccessAdminAndManager
     @GetMapping("getAllUsers")
+    @Operation(description = "Получить всех клиентов")
     public List<ManagerUserDto> getAllShopUsers(Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)
@@ -106,6 +107,7 @@ public class ManagerController {
 
     @AccessAdminAndManager
     @PutMapping("block/{userId}")
+    @Operation(description = "Заблокировать клиента")
     public String blockUser(@PathVariable Integer userId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)
@@ -115,6 +117,7 @@ public class ManagerController {
 
     @AccessAdminAndManager
     @PutMapping("unlock/{userId}")
+    @Operation(description = "Разблокировать клиента")
     public String unLockUser(@PathVariable Integer userId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)

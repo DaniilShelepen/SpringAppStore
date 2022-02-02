@@ -1,10 +1,8 @@
-package com.daniil.courses.repositories;
+package com.daniil.courses.dal.repositories;
 
-import com.daniil.courses.models.Basket;
-import com.daniil.courses.models.StoreItem;
+import com.daniil.courses.dal.entity.Basket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

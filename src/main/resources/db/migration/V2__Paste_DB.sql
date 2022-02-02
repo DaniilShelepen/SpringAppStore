@@ -33,16 +33,16 @@ VALUES (-7, 'IOS', true,
 
 
 INSERT INTO public.store_item
-VALUES (1, true, 2000.00, -1, -1);
+VALUES (-1, true, 2000.00, -1, -1);
 INSERT INTO public.store_item
-VALUES (2, true, 3500.00, -2, -1);
+VALUES (-2, true, 3500.00, -2, -1);
 INSERT INTO public.store_item
-VALUES (3, true, 6200.00, -3, -1);
+VALUES (-3, true, 6200.00, -3, -1);
 INSERT INTO public.store_item
-VALUES (4, true, 2700.00, -4, -1);
+VALUES (-4, true, 2700.00, -4, -1);
 INSERT INTO public.store_item
-VALUES (5, true, 2400.00, -5, -1);
+VALUES (-5, true, 2400.00, -5, -1);
 INSERT INTO public.store_item
-VALUES (6, true, 1600.00, -6, -1);
+VALUES (-6, true, 1600.00, -6, -1);
 INSERT INTO public.store_item
-VALUES (7, true, 300.00, -7, -1);
+VALUES (-7, true, 300.00, -7, -1);

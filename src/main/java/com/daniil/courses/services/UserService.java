@@ -1,8 +1,6 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.client.model.PaymentRequest;
 import com.daniil.courses.dto.*;
-import com.daniil.courses.dto.UserOrderDto;
 
 import java.util.List;
 

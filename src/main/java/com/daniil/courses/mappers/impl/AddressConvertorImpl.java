@@ -2,7 +2,7 @@ package com.daniil.courses.mappers.impl;
 
 import com.daniil.courses.dto.AddressDto;
 import com.daniil.courses.mappers.AddressConvertor;
-import com.daniil.courses.models.Address;
+import com.daniil.courses.dal.entity.Address;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

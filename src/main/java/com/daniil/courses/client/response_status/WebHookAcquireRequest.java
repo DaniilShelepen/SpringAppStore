@@ -1,4 +1,4 @@
-package com.daniil.courses.payment;
+package com.daniil.courses.client.response_status;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

@@ -1,6 +1,5 @@
 package com.daniil.courses.dto;
 
-import com.daniil.courses.role_models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @SuperBuilder

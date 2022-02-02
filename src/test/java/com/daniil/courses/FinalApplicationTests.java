@@ -1,13 +1,8 @@
 package com.daniil.courses;
 
+import com.daniil.courses.dal.entity.*;
+import com.daniil.courses.dal.repositories.*;
 import com.daniil.courses.dto.ItemDto;
-import com.daniil.courses.models.Address;
-import com.daniil.courses.models.Item;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.*;
-import com.daniil.courses.role_models.Manager;
-import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.FilterService;
 import com.daniil.courses.services.ManagerService;
 import com.daniil.courses.services.UserService;
@@ -18,7 +13,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -247,18 +244,7 @@ class FinalApplicationTests {
 
     @Test
     void admin() {
-        userRepository.save(ME);
-
-        addressRepository.save(newAddress);
-
-        orderRepository.save(order1);
-
-        log.warn(newAddress.toString());
-        newAddress.setFloor("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        addressRepository.save(newAddress);
-
-        log.warn("{}",order1.toString());
-
+    managerService.setAvailable(1,false,1);
     }
 
 }

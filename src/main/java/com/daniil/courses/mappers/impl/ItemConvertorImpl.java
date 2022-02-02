@@ -2,7 +2,7 @@ package com.daniil.courses.mappers.impl;
 
 import com.daniil.courses.dto.ItemDto;
 import com.daniil.courses.mappers.ItemConvertor;
-import com.daniil.courses.models.Item;
+import com.daniil.courses.dal.entity.Item;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

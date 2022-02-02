@@ -1,25 +1,24 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.dal.entity.Item;
+import com.daniil.courses.dal.entity.Order;
+import com.daniil.courses.dal.entity.StoreItem;
+import com.daniil.courses.dal.entity.User;
+import com.daniil.courses.dal.repositories.*;
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.ManagerUserDto;
 import com.daniil.courses.dto.ORDER_STATUS;
-import com.daniil.courses.exceptions.ManagerNotFound;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
 import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
 import com.daniil.courses.mappers.UserConvertor;
-import com.daniil.courses.models.Item;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.*;
-import com.daniil.courses.role_models.User;
 import com.daniil.courses.services.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +53,6 @@ public class ManagerServiceImpl implements ManagerService {
                 .price(storeItemDto.getPrice())
                 .available(storeItemDto.isAvailable())
                 .item(item)
-                .manager(managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found")))
                 .build();
 
         itemRepository.save(item);
@@ -69,7 +67,6 @@ public class ManagerServiceImpl implements ManagerService {
     public void setAvailable(Integer storeItemId, boolean available, Integer managerId) {
         StoreItem storeItem1 = storeItemRepository.findById(storeItemId).orElseThrow(() -> new StoreItemIsNotFound("Store item is not found"));
         storeItem1.setAvailable(available);
-        storeItem1.setManager(managerRepository.findById(managerId).orElseThrow(() -> new ManagerNotFound("Manager is not found")));
         storeItemRepository.save(storeItem1);
     }
 
@@ -100,7 +97,7 @@ public class ManagerServiceImpl implements ManagerService {
 
         Order order = orderRepository.findByExternalId(externalId);
         if (order == null)
-            throw new RuntimeException();
+            throw new NotFoundException("Not found");
 
         List<ORDER_STATUS> orderStatus = List.of(
                 ORDER_STATUS.CONFIRMED,
@@ -119,9 +116,7 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         order.setStatus(updateStatus);
-        //order.setManager(managerRepository.findById(managerId).orElseThrow());//todo
-
-        orderRepository.save(order);
+        orderRepository.save(order);//todo тут херня
 
         return "Статус изменён на: " + updateStatus;
     }
@@ -168,4 +163,4 @@ public class ManagerServiceImpl implements ManagerService {
         userRepository.save(user);
         return user.getName() + " unblocked!";
     }
-    }
+}

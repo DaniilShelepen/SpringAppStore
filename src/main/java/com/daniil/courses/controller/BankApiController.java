@@ -1,11 +1,12 @@
 package com.daniil.courses.controller;
 
-import com.daniil.courses.payment.WebHookAcquireRequest;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.payment.WebHookAcquireSuccessRequest;
-import com.daniil.courses.repositories.OrderRepository;
+import com.daniil.courses.client.response_status.WebHookAcquireRequest;
+import com.daniil.courses.client.response_status.WebHookAcquireSuccessRequest;
+import com.daniil.courses.dal.entity.Order;
+import com.daniil.courses.dal.repositories.OrderRepository;
 import com.daniil.courses.dto.ORDER_STATUS;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class BankApiController {
     }
 
     @PostMapping("getanswer")
+    @Operation(description = "Скрытый контроллер для получния ответа от банка")
     public void getAnswer(@RequestBody WebHookAcquireRequest webHookAcquireRequest) {
         Order order = orderRepository.findByExternalId(webHookAcquireRequest.getExternalId());
         if (webHookAcquireRequest instanceof WebHookAcquireSuccessRequest)

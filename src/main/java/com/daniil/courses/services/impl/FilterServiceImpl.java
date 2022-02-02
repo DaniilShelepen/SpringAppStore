@@ -1,13 +1,13 @@
 package com.daniil.courses.services.impl;
 
-import com.daniil.courses.dto.UserOrderDto;
+import com.daniil.courses.dal.entity.Order;
+import com.daniil.courses.dal.entity.StoreItem;
+import com.daniil.courses.dal.repositories.OrderRepository;
+import com.daniil.courses.dal.repositories.StoreItemRepository;
+import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.UserStoreItemDto;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
-import com.daniil.courses.models.Order;
-import com.daniil.courses.models.StoreItem;
-import com.daniil.courses.repositories.OrderRepository;
-import com.daniil.courses.repositories.StoreItemRepository;
 import com.daniil.courses.services.FilterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class FilterServiceImpl implements FilterService {
     @Override
     public List<UserStoreItemDto> getAllItemsWithType(String type) {
         return storeItemRepository.findAllByAvailable(true).stream()
-                .filter(storeItem -> storeItem.getItem().getType().equalsIgnoreCase(type))
+                .filter(storeItem -> storeItem.getItem().getType().toLowerCase().contains(type.toLowerCase()))
                 .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
@@ -38,7 +38,15 @@ public class FilterServiceImpl implements FilterService {
     @Override
     public List<UserStoreItemDto> getAllItemsWithDriverConfiguration(String configuration) {
         return storeItemRepository.findAllByAvailable(true).stream()
-                .filter(storeItem -> storeItem.getItem().getDriverConfiguration().equalsIgnoreCase(configuration))
+                .filter(storeItem -> storeItem.getItem().getDriverConfiguration().toLowerCase().contains(configuration.toLowerCase()))
+                .map(storeItemConvertor::convertForUser)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserStoreItemDto> getAllItemsWithDescription(String description) {
+        return storeItemRepository.findAllByAvailable(true).stream()
+                .filter(storeItem -> storeItem.getItem().getDescription().toLowerCase().contains(description.toLowerCase()))
                 .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
@@ -46,7 +54,7 @@ public class FilterServiceImpl implements FilterService {
     @Override
     public List<UserStoreItemDto> getAllItemsWithCPU(String CPU) {
         return storeItemRepository.findAllByAvailable(true).stream()
-                .filter(storeItem -> storeItem.getItem().getCPU().equalsIgnoreCase(CPU))
+                .filter(storeItem -> storeItem.getItem().getCPU().toLowerCase().contains(CPU.toLowerCase()))
                 .map(storeItemConvertor::convertForUser)
                 .collect(Collectors.toList());
     }
@@ -62,22 +70,22 @@ public class FilterServiceImpl implements FilterService {
 
 
     @Override
-    public List<UserOrderDto> filterUserOrderByStatus(Integer userId, String orderStatuses) {
+    public List<ManagerOrderDto> filterUserOrderByStatus(Integer userId, String orderStatuses) {
 
         return orderRepository.findAllByUserId(userId).stream()
                 .filter(order -> order.getStatus().toString().contains(orderStatuses.toLowerCase()))
-                .map(orderConvertor::convertForUser)
+                .map(orderConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 
 
     @Override
-    public List<UserOrderDto> filterUserOrderByDateNew(Integer userId) {
+    public List<ManagerOrderDto> filterUserOrderByDateNew(Integer userId) {
 
-        List<UserOrderDto> finalList =
+        List<ManagerOrderDto> finalList =
                 orderRepository.findAllByUserId(userId).stream()
                         .sorted(Comparator.comparing(Order::getDate))
-                        .map(orderConvertor::convertForUser)
+                        .map(orderConvertor::convertForManager)
                         .collect(Collectors.toList());
         Collections.reverse(finalList);
         return finalList;
@@ -85,10 +93,10 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
-    public List<UserOrderDto> filterUserOrderByDateOld(Integer userId) {
+    public List<ManagerOrderDto> filterUserOrderByDateOld(Integer userId) {
         return orderRepository.findAllByUserId(userId).stream()
                 .sorted(Comparator.comparing(Order::getDate))
-                .map(orderConvertor::convertForUser)
+                .map(orderConvertor::convertForManager)
                 .collect(Collectors.toList());
     }
 
