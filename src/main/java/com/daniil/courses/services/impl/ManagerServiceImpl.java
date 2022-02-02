@@ -116,7 +116,9 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         order.setStatus(updateStatus);
-        orderRepository.save(order);//todo тут херня
+        //так ругается на стор айтем, потом на адрес, потом на User.Address
+        //а дальше я не продвинулся
+        orderRepository.save(order);//todo тут херня Found shared references to a collection: com.daniil.courses.dal.entity.Order.storeItem
 
         return "Статус изменён на: " + updateStatus;
     }

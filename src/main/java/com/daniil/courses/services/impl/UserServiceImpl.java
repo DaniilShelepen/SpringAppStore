@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,7 +83,7 @@ public class UserServiceImpl implements UserService {
                 .street(addressdto.getStreet())
                 .visible(true)
                 .build();
-        user.setAddresses(List.of(newAddress));
+        user.setAddresses(Set.of(newAddress));
         addressRepository.save(newAddress);
         return addressdto;
     }
