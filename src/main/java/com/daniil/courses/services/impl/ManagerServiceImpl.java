@@ -19,6 +19,7 @@ import com.daniil.courses.mappers.StoreItemConvertor;
 import com.daniil.courses.mappers.UserConvertor;
 import com.daniil.courses.services.ManagerService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -93,12 +94,11 @@ public class ManagerServiceImpl implements ManagerService {
 
     }
 
+    @SneakyThrows
     @Override
-    public String setOrderStatus(String externalId, Integer managerId) {
+    public void setOrderStatus(Integer orderId, Integer managerId) {
 
-        Order order = orderRepository.findByExternalId(externalId);
-        if (order == null)
-            throw new NotFoundException("Not found");
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Order is not found"));
 
         List<ORDER_STATUS> orderStatus = List.of(
                 ORDER_STATUS.CONFIRMED,
@@ -107,24 +107,16 @@ public class ManagerServiceImpl implements ManagerService {
         );
 
         if (order.getStatus().equals(ORDER_STATUS.AWAITING_OF_CONFIRM) || order.getStatus().equals(ORDER_STATUS.ERROR))
-            return "Вы не можете изменить статус заказа!";
+            throw new Exception("");
 
-        ORDER_STATUS updateStatus;
+        ORDER_STATUS updateStatus = null;
         try {
             updateStatus = orderStatus.get(orderStatus.indexOf(order.getStatus()) + 1);
         } catch (Exception e) {
-            return "Вы не можете изменить статус заказа!";
+            e.printStackTrace();
         }
 
-        order.setStatus(updateStatus);
-
-        //так ругается на стор айтем, потом на адрес, потом на User.Address
-        //а дальше я не продвинулся
-
-
-        orderRepository.save(order);//todo тут херня Found shared references to a collection: com.daniil.courses.dal.entity.Order.storeItem
-
-        return "Статус изменён на: " + updateStatus;
+        orderRepository.setStatus(order.getId(), updateStatus);
     }
 
     @Override

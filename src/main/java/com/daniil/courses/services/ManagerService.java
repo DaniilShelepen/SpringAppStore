@@ -30,7 +30,7 @@ public interface ManagerService {
     /**
      * Изменить статус заказа
      */
-    String setOrderStatus(String externalId, Integer managerId);
+    void setOrderStatus(Integer orderId, Integer managerId);
 
     /**
      * Получить все заказы пклиента

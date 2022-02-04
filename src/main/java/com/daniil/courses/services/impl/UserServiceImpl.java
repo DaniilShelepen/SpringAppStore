@@ -1,5 +1,6 @@
 package com.daniil.courses.services.impl;
 
+import com.daniil.courses.client.model.PaymentResponse;
 import com.daniil.courses.dal.entity.*;
 import com.daniil.courses.dal.repositories.*;
 import com.daniil.courses.dto.*;
@@ -22,7 +23,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 .street(addressdto.getStreet())
                 .visible(true)
                 .build();
-        user.setAddresses(Set.of(newAddress));
+        user.setAddresses(List.of(newAddress));
         addressRepository.save(newAddress);
         return addressConvertor.convert(newAddress);
     }
@@ -135,8 +135,8 @@ public class UserServiceImpl implements UserService {
 
         BigDecimal price = BigDecimal.valueOf(basketList.stream().mapToDouble(basketItem -> Double.parseDouble(basketItem.getPrice().toString())).sum());
 
-        Set<StoreItem> storeItems = basketList.stream()
-                .map(Basket::getStoreItem).collect(Collectors.toSet());
+        List<StoreItem> storeItems = basketList.stream()
+                .map(Basket::getStoreItem).collect(Collectors.toList());
 
         String externalId = getRandomString();
 
@@ -153,7 +153,20 @@ public class UserServiceImpl implements UserService {
 
         basketService.clearBasketByUser(userId);
 
-        return paymentService.payToBank(order, accountId);
+        PaymentResponse paymentResult;
+        try {
+            paymentResult = paymentService.payToBank(order.getId(), accountId);
+        } catch (PaymentRejected e){
+            orderRepository.setStatus(order.getId(),ORDER_STATUS.ERROR);
+            throw e;
+        }
+
+
+       return CreateOrderResponse.builder()
+                .paymentConfirmationUrl(paymentResult.getPaymentConfirmationRedirectUrl())
+                .price(order.getPrice())
+                .build();
+
     }
 
     @Override

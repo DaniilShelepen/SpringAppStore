@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.Hibernate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,8 +15,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,31 +37,18 @@ public class Order {
     private BigDecimal price;
     private String externalId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Address address;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)//тут не ван ту мени но я и сюда пытался впихивать
-    Set<StoreItem> storeItem;
+    @ManyToMany
+    List<StoreItem> storeItem;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "refactor_by")
     @LastModifiedBy
     private Manager manager;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Order that = (Order) o;
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 
 }

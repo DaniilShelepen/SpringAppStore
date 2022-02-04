@@ -1,10 +1,10 @@
 package com.daniil.courses.controller;
 
+import com.daniil.courses.dal.entity.Manager;
+import com.daniil.courses.dal.repositories.ManagerRepository;
 import com.daniil.courses.dto.ManagerOrderDto;
 import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.ManagerUserDto;
-import com.daniil.courses.dal.repositories.ManagerRepository;
-import com.daniil.courses.dal.entity.Manager;
 import com.daniil.courses.security.AccessAdminAndManager;
 import com.daniil.courses.services.ManagerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +23,8 @@ import java.util.List;
 public class ManagerController {
     private final ManagerService managerService;
     private final ManagerRepository managerRepository;
+
+
 
     @AccessAdminAndManager
     @PostMapping("createItem")
@@ -66,13 +68,13 @@ public class ManagerController {
     }
 
     @AccessAdminAndManager
-    @PutMapping("setStatus/{externalId}")
+    @PutMapping("setStatus/{orderId}")
     @Operation(description = "Установить заказу следующий статус")
-    public String setOrderStatus(@PathVariable String externalId, Principal principal) {
+    public void setOrderStatus(@PathVariable Integer orderId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)
             throw new UsernameNotFoundException("");
-        return managerService.setOrderStatus(externalId, manager.getId());
+        managerService.setOrderStatus(orderId, manager.getId());
     }
 
     @AccessAdminAndManager

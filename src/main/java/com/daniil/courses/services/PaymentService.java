@@ -1,12 +1,12 @@
 package com.daniil.courses.services;
 
-import com.daniil.courses.dto.CreateOrderResponse;
-import com.daniil.courses.dal.entity.Order;
+import com.daniil.courses.client.model.PaymentResponse;
 
 
 public interface PaymentService {
     /**
      * Процесс оплаты в банке
+     * @return
      */
-    CreateOrderResponse payToBank(Order order,String bankCard);
+    PaymentResponse payToBank(Integer orderId, String bankCard);
 }

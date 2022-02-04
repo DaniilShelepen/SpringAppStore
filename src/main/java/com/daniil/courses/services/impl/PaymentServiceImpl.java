@@ -5,9 +5,6 @@ import com.daniil.courses.client.BankPaymentProperty;
 import com.daniil.courses.client.model.Amount;
 import com.daniil.courses.client.model.PaymentRequest;
 import com.daniil.courses.client.model.PaymentResponse;
-import com.daniil.courses.dto.CreateOrderResponse;
-import com.daniil.courses.dto.ORDER_STATUS;
-import com.daniil.courses.exceptions.PaymentRejected;
 import com.daniil.courses.dal.entity.Order;
 import com.daniil.courses.dal.repositories.OrderRepository;
 import com.daniil.courses.services.PaymentService;
@@ -24,7 +21,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public CreateOrderResponse payToBank(Order order, String bankCard) {
+    public PaymentResponse payToBank(Integer orderId, String bankCard) {
+
+        Order order = orderRepository.getById(orderId);
 
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .accountId(bankCard)
@@ -37,16 +36,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .acquireWebHook(bankPaymentProperty.getControllerURL())
                 .build();
 
-        try {
-            PaymentResponse paymentResult = bankPaymentClient.payment(paymentRequest);
-            return CreateOrderResponse.builder()
-                    .paymentConfirmationUrl(paymentResult.getPaymentConfirmationRedirectUrl())
-                    .price(order.getPrice())
-                    .build();
-        } catch (PaymentRejected e) {
-            order.setStatus(ORDER_STATUS.ERROR);
-            orderRepository.save(order);
-            throw e;
-        }
+        return bankPaymentClient.payment(paymentRequest);
     }
 }
