@@ -9,4 +9,7 @@ public interface StoreItemRepository extends JpaRepository<StoreItem, Integer> {
     StoreItem findByIdAndAvailable(Integer id, boolean available);
 
     List<StoreItem> findAllByAvailable(boolean available);
+
+    StoreItem findByItemId(Integer item_id);
+
 }

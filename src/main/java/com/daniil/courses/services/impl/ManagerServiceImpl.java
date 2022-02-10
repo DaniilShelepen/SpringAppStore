@@ -13,6 +13,7 @@ import com.daniil.courses.dto.ManagerStoreItemDto;
 import com.daniil.courses.dto.ManagerUserDto;
 import com.daniil.courses.dto.ORDER_STATUS;
 import com.daniil.courses.exceptions.StoreItemIsNotFound;
+import com.daniil.courses.exceptions.UserAlreadyExist;
 import com.daniil.courses.exceptions.UserNotFound;
 import com.daniil.courses.mappers.OrderConvertor;
 import com.daniil.courses.mappers.StoreItemConvertor;
@@ -141,24 +142,24 @@ public class ManagerServiceImpl implements ManagerService {
                 .collect(Collectors.toList());
     }
 
+    @SneakyThrows
     @Override
-    public String blockUser(Integer userId) {
+    public void blockUser(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found"));
         if (!user.isAvailable())
-            return user.getName() + " already blocked";
+            throw new UserAlreadyExist("Already blocked");
         user.setAvailable(false);
         userRepository.save(user);
-        return user.getName() + " blocked!";
     }
 
+    @SneakyThrows
     @Override
-    public String unlockUser(Integer userId) {
+    public void unlockUser(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("User is not found"));
         if (user.isAvailable())
-            return user.getName() + " not blocked";
+            throw new UserAlreadyExist("Not blocked");
 
         user.setAvailable(true);
         userRepository.save(user);
-        return user.getName() + " unblocked!";
     }
 }

@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 
-@Entity
+@Entity(name = "store_item")
 @Getter
 @Setter
 @SuperBuilder

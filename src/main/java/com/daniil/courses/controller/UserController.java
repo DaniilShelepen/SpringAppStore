@@ -29,101 +29,104 @@ public class UserController {
     }
 
     @AccessUser
-    @GetMapping("addresses")
+    @GetMapping("{me}/addresses")
     @Operation(description = "Получить адреса юзера")
-    public List<AddressDto> getAddresses(Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public List<AddressDto> getAddresses(Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         return userService.getAllAddressesByUser(user.getId());
     }
 
     @AccessUser
-    @DeleteMapping("removeAddress/{addressId}")
+    @DeleteMapping("{me}/address/{addressId}")
     @Operation(description = "Удалить адрес")
-    public void removeAddresses(Principal principal, @PathVariable Integer addressId) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public void removeAddresses(Principal principal, @PathVariable Integer addressId, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         userService.removeAddressByUser(addressId, user.getId());
     }
 
     @AccessUser
-    @PostMapping("addAddress")
+    @PostMapping("{me}/addAddress")
     @Operation(description = "Добавить адрес")
-    public AddressDto addAddress(@RequestBody AddressDto addressDto, Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public AddressDto addAddress(@RequestBody AddressDto addressDto, Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         return userService.addAddressByUser(user.getId(), addressDto);
     }
 
     @AccessUser
-    @PutMapping("refactorAddress/{addressId}")
+    @PutMapping("{me}/address/{addressId}")
     @Operation(description = "Редактировать адрес")
-    public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer addressId, Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public AddressDto refactorAddress(@RequestBody AddressDto addressDto, @PathVariable Integer addressId,
+                                      Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         return userService.refactorAddressByUser(addressDto, user.getId(), addressId);
     }
 
     @AccessUser
-    @GetMapping("Basket")
+    @GetMapping("{me}/basket")
     @Operation(description = "Получить корзину")
-    public List<BasketDto> Basket(Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public List<BasketDto> Basket(Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         return basketService.getBasketByUser(user.getId());
     }
 
     @AccessUser
-    @PostMapping("{count}/addToBasket/{storeItemId}")
+    @PostMapping("{me}/addToBasket/{count}/{storeItemId}")
     @Operation(description = "Добавить товар в корзину")
-    public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public void addToBasket(@PathVariable Integer storeItemId, @PathVariable Integer count, Principal principal,
+                            @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         basketService.addItemToBasketByUser(storeItemId, user.getId(), count);
     }
 
     @AccessUser
-    @DeleteMapping("deleteFromBasket/{storeItemId}")
+    @DeleteMapping("{me}/deleteItem/{storeItemId}")
     @Operation(description = "Удаление товара из корзины")
-    public void removeItemFromBasket(@PathVariable Integer storeItemId, Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public void removeItemFromBasket(@PathVariable Integer storeItemId, Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         basketService.removeFromBasketByUser(storeItemId, user.getId());
     }
 
     @AccessUser
-    @GetMapping("clearBasket")
+    @GetMapping("{me}/clearBasket")
     @Operation(description = "Очищение корзины")
-    public void clearBasket(Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public void clearBasket(Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         basketService.clearBasketByUser(user.getId());
     }
 
     @AccessUser
-    @GetMapping("byeItems/{addressId}/{bankCard}")
-    public CreateOrderResponse byeItems(@PathVariable Integer addressId, Principal principal, @PathVariable String bankCard) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
-        return userService.buyItems(user.getId(), addressId,bankCard);
+    @GetMapping("{me}/buyItems/{addressId}/{bankCard}")
+    public CreateOrderResponse buyItems(@PathVariable Integer addressId, Principal principal, @PathVariable String bankCard,
+                                        @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
+        return userService.buyItems(user.getId(), addressId, bankCard);
     }
 
     @AccessUser
-    @GetMapping("Orders")
+    @GetMapping("{me}/orders")
     @Operation(description = "Получить все заказы")
-    public List<UserOrderDto> getAllOrders(Principal principal) {
-        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(),true);
-        if(user == null)
-            throw new UserNotFound("Sorry but you are blocked :(");
+    public List<UserOrderDto> getAllOrders(Principal principal, @PathVariable Integer me) {
+        User user = userRepository.findByPhoneNumberAndAvailable(principal.getName(), true);
+        if (user == null || !user.getId().equals(me))
+            throw new UserNotFound("You are blocked or 'me' not equals userId :(");
         return userService.getAllOrdersByUser(user.getId());
     }
 

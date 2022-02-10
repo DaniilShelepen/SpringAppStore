@@ -21,7 +21,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException, serverError);
+        return new ResponseEntity<>(apiException.getMessage(), serverError);
     }
 
     @ExceptionHandler({AddressIsNotFound.class})
@@ -33,7 +33,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException, serverError);
+        return new ResponseEntity<>(apiException.getMessage(), serverError);
     }
 
     @ExceptionHandler({UserNotFound.class})
@@ -45,7 +45,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException,serverError);
+        return new ResponseEntity<>(apiException.getMessage(),serverError);
     }
 
     @ExceptionHandler({UserAlreadyExist.class})
@@ -57,7 +57,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException,serverError);
+        return new ResponseEntity<>(apiException.getMessage(),serverError);
     }
 
     @ExceptionHandler({ManagerNotFound.class})
@@ -69,7 +69,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException,serverError);
+        return new ResponseEntity<>(apiException.getMessage(),serverError);
     }
 
     @ExceptionHandler({BasketIsEmpty.class})
@@ -81,7 +81,7 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException,serverError);
+        return new ResponseEntity<>(apiException.getMessage(),serverError);
     }
 
     @ExceptionHandler({ManagerIsAlreadyExists.class})
@@ -93,6 +93,6 @@ public class ApiExceptionHandler {
                 serverError,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
-        return new ResponseEntity<>(apiException, serverError);
+        return new ResponseEntity<>(apiException.getMessage(), serverError);
     }
 }

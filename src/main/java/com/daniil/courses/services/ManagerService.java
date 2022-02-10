@@ -50,11 +50,11 @@ public interface ManagerService {
     /**
      * Заблокировать клиента
      */
-    String blockUser(Integer userId);
+    void blockUser(Integer userId);
 
     /**
      * Разблокировать клиента
      */
-    String unlockUser(Integer userId);
+    void unlockUser(Integer userId);
 
 }

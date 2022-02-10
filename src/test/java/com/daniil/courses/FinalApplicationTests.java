@@ -59,13 +59,14 @@ class FinalApplicationTests {
     @Autowired
     FilterService filterService;
 
+
     private static final Item item1 = new Item(null, "MacOs", "good very mathafaka",
-            "PC", "SSD 1024", "A93", LocalDate.of(2002, 3, 15),true);
+            "PC", "SSD 1024", "A93", LocalDate.of(2002, 3, 15), true);
 
     private static final Item item2 = new Item(null, "Iphone 11", "mb moy",
-            "phone", "256GB", "A13", LocalDate.of(2002, 3, 15),true);
+            "phone", "256GB", "A13", LocalDate.of(2002, 3, 15), true);
     private static final Item item3 = new Item(null, "AirPods", "birushi",
-            "headPhones", "nun", "A3", LocalDate.of(2002, 3, 15),true);
+            "headPhones", "nun", "A3", LocalDate.of(2002, 3, 15), true);
 
 
     private static final User ME = User.builder()
@@ -133,7 +134,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(new Date())
-           // .status("AAAA")
+            // .status("AAAA")
             .build();
 
     Order order1 = Order.builder()
@@ -150,7 +151,7 @@ class FinalApplicationTests {
             .user(ME)
             .date(LocalDate.of(2002, 3, 15))
             .dateOfRefactoring(new Date())
-           // .status("AAAA")
+            // .status("AAAA")
             .build();
 
     Manager manager = Manager.builder()
@@ -244,7 +245,6 @@ class FinalApplicationTests {
 
     @Test
     void admin() {
-    managerService.setAvailable(1,false,1);
+        log.warn("{}", filterService.filter("macbook", "", "", "", "",LocalDate.of(2002,7,15),null));
     }
-
 }

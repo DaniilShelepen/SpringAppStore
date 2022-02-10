@@ -25,9 +25,8 @@ public class ManagerController {
     private final ManagerRepository managerRepository;
 
 
-
     @AccessAdminAndManager
-    @PostMapping("createItem")
+    @PostMapping("storeItem")
     @Operation(description = "Добавление нового товара")
     public ManagerStoreItemDto addNewItem(@RequestBody ManagerStoreItemDto storeItemDto, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
@@ -37,7 +36,7 @@ public class ManagerController {
     }
 
     @AccessAdminAndManager
-    @PutMapping(value = "setAvailable/{storeItemId}/{available}")
+    @PutMapping(value = "storeItem/{storeItemId}/{available}")
     @Operation(description = "Установить доступ к товару")
     public void setAvailable(@PathVariable Integer storeItemId, @PathVariable boolean available, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
@@ -78,7 +77,7 @@ public class ManagerController {
     }
 
     @AccessAdminAndManager
-    @GetMapping("getUserOrders/{userId}")
+    @GetMapping("orders/{userId}")
     @Operation(description = "Получить все заказы пользователя")
     public List<ManagerOrderDto> getAllUserOrders(@PathVariable Integer userId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
@@ -88,7 +87,7 @@ public class ManagerController {
     }
 
     @AccessAdminAndManager
-    @GetMapping("getAllOrders")
+    @GetMapping("allOrders")
     @Operation(description = "Получить все заказы")
     public List<ManagerOrderDto> getAllOrders(Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
@@ -110,20 +109,20 @@ public class ManagerController {
     @AccessAdminAndManager
     @PutMapping("block/{userId}")
     @Operation(description = "Заблокировать клиента")
-    public String blockUser(@PathVariable Integer userId, Principal principal) {
+    public void blockUser(@PathVariable Integer userId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)
             throw new UsernameNotFoundException("");
-        return managerService.blockUser(userId);
+        managerService.blockUser(userId);
     }
 
     @AccessAdminAndManager
     @PutMapping("unlock/{userId}")
     @Operation(description = "Разблокировать клиента")
-    public String unLockUser(@PathVariable Integer userId, Principal principal) {
+    public void unLockUser(@PathVariable Integer userId, Principal principal) {
         Manager manager = managerRepository.findByPersonalNumberAndDeleted(principal.getName(), false);
         if (manager == null)
             throw new UsernameNotFoundException("");
-        return managerService.unlockUser(userId);
+        managerService.unlockUser(userId);
     }
 }

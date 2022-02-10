@@ -16,21 +16,21 @@ public class AdminController {
     private final AdminService adminService;
 
     @AccessAdmin
-    @PostMapping("createManager")
+    @PostMapping("manager")
     @Operation(description = "Создание менеджера")
     public ManagerDto createManager(@RequestBody ManagerDto managerDto) {
         return adminService.createManager(managerDto);
     }
 
     @AccessAdmin
-    @GetMapping("getManagers")
+    @GetMapping("managers")
     @Operation(description = "Получить всех менеджеров")
     public List<ManagerDto> getAllShopManagers() {
         return adminService.getAllManagers();
     }
 
     @AccessAdmin
-    @DeleteMapping("deleteManager/{managerId}")
+    @DeleteMapping("manager/{managerId}")
     @Operation(description = "Удалить менеджера")
     public void deleteManager(@PathVariable Integer managerId) {
         adminService.deleteManager(managerId);
