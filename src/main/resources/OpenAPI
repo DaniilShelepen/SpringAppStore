@@ -1,0 +1,1378 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/users/{me}/address/{addressId}": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Редактировать адрес",
+        "operationId": "refactorAddress",
+        "parameters": [
+          {
+            "name": "addressId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Удалить адрес",
+        "operationId": "removeAddresses",
+        "parameters": [
+          {
+            "name": "addressId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/manager/unlock/{userId}": {
+      "put": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Разблокировать клиента",
+        "operationId": "unLockUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/manager/storeItem/{storeItemId}/{available}": {
+      "put": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Установить доступ к товару",
+        "operationId": "setAvailable",
+        "parameters": [
+          {
+            "name": "storeItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "available",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/manager/setStatus/{orderId}": {
+      "put": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Установить заказу следующий статус",
+        "operationId": "setOrderStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/manager/refactorStoreItem/{storeItemId}": {
+      "put": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Редактирование товара",
+        "operationId": "refactorStoreItem",
+        "parameters": [
+          {
+            "name": "storeItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerStoreItemDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerStoreItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/block/{userId}": {
+      "put": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Заблокировать клиента",
+        "operationId": "blockUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/users/{me}/addToBasket/{count}/{storeItemId}": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Добавить товар в корзину",
+        "operationId": "addToBasket",
+        "parameters": [
+          {
+            "name": "storeItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "count",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/users/{me}/addAddress": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Добавить адрес",
+        "operationId": "addAddress",
+        "parameters": [
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/createUser": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Создание нового юзера",
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/storeItem": {
+      "post": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Добавление нового товара",
+        "operationId": "addNewItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerStoreItemDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerStoreItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/manager": {
+      "post": {
+        "tags": [
+          "admin-controller"
+        ],
+        "description": "Создание менеджера",
+        "operationId": "createManager",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{me}/orders": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Получить все заказы",
+        "operationId": "getAllOrders",
+        "parameters": [
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{me}/clearBasket": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Очищение корзины",
+        "operationId": "clearBasket",
+        "parameters": [
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/users/{me}/buyItems/{addressId}/{bankCard}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "buyItems",
+        "parameters": [
+          {
+            "name": "addressId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "bankCard",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOrderResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{me}/basket": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Получить корзину",
+        "operationId": "Basket",
+        "parameters": [
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BasketDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{me}/addresses": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Получить адреса юзера",
+        "operationId": "getAddresses",
+        "parameters": [
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/storeItems": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Вывод всех доступных товаров",
+        "operationId": "getAvailableShopItems",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserStoreItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/storeItems": {
+      "get": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Получить весь список товаров",
+        "operationId": "viewStoreItems",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerStoreItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/orders/{userId}": {
+      "get": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Получить все заказы пользователя",
+        "operationId": "getAllUserOrders",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/getAllUsers": {
+      "get": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Получить всех клиентов",
+        "operationId": "getAllShopUsers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerUserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manager/allOrders": {
+      "get": {
+        "tags": [
+          "manager-controller"
+        ],
+        "description": "Получить все заказы",
+        "operationId": "getAllOrders_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/{userId}/{orderStatuses}": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод отфильтрованных заказов у клиента по статусу",
+        "operationId": "filterUserStatus",
+        "parameters": [
+          {
+            "name": "orderStatuses",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/{userId}/old": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод отфильтрованных заказов у клиента по дате(старые)",
+        "operationId": "filterOrderOld",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/{userId}/new": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод отфильтрованных заказов у клиента по дате(новые)",
+        "operationId": "filterOrderNew",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerOrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/notAuthorized/filter": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод товаров по фильтру",
+        "operationId": "filter",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "driverConfiguration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "CPU",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "releaseDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 999999999
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserStoreItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/notAuthorized/expensive": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод отфильтрованных товаров по цене(макс)",
+        "operationId": "filterExpensive",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserStoreItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/filter/notAuthorized/cheap": {
+      "get": {
+        "tags": [
+          "filter-controller"
+        ],
+        "description": "Вывод отфильтрованных товаров по цене(мин)",
+        "operationId": "filterCheap",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserStoreItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/managers": {
+      "get": {
+        "tags": [
+          "admin-controller"
+        ],
+        "description": "Получить всех менеджеров",
+        "operationId": "getAllShopManagers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManagerDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{me}/deleteItem/{storeItemId}": {
+      "delete": {
+        "tags": [
+          "user-controller"
+        ],
+        "description": "Удаление товара из корзины",
+        "operationId": "removeItemFromBasket",
+        "parameters": [
+          {
+            "name": "storeItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "me",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/manager/{managerId}": {
+      "delete": {
+        "tags": [
+          "admin-controller"
+        ],
+        "description": "Удалить менеджера",
+        "operationId": "deleteManager",
+        "parameters": [
+          {
+            "name": "managerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "city": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "base": {
+            "type": "string"
+          },
+          "flat": {
+            "type": "string"
+          },
+          "floor": {
+            "type": "string"
+          },
+          "entrance": {
+            "type": "string"
+          }
+        }
+      },
+      "ItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "driverConfiguration": {
+            "type": "string"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "cpu": {
+            "type": "string"
+          }
+        }
+      },
+      "ManagerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "personalNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "ManagerStoreItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemDto": {
+            "$ref": "#/components/schemas/ItemDto"
+          },
+          "price": {
+            "type": "number"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "manger": {
+            "$ref": "#/components/schemas/ManagerDto"
+          }
+        }
+      },
+      "UserDto": {
+        "required": [
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "UserOrderDto": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "SUCCESS",
+              "AWAITING_OF_CONFIRM",
+              "CONFIRMED",
+              "AWAITING_OF_DELIVERY",
+              "DELIVERED"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateOfRefactoring": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "price": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "addressDto": {
+            "$ref": "#/components/schemas/AddressDto"
+          }
+        }
+      },
+      "CreateOrderResponse": {
+        "type": "object",
+        "properties": {
+          "paymentConfirmationUrl": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      },
+      "BasketDto": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "price": {
+            "type": "number"
+          },
+          "itemDto": {
+            "$ref": "#/components/schemas/ItemDto"
+          }
+        }
+      },
+      "UserStoreItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemDto": {
+            "$ref": "#/components/schemas/ItemDto"
+          },
+          "price": {
+            "type": "number"
+          }
+        }
+      },
+      "Manager": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "personalNumber": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ManagerOrderDto": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "SUCCESS",
+              "AWAITING_OF_CONFIRM",
+              "CONFIRMED",
+              "AWAITING_OF_DELIVERY",
+              "DELIVERED"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateOfRefactoring": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "price": {
+            "type": "number"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ManagerUserDto"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "manager": {
+            "$ref": "#/components/schemas/Manager"
+          }
+        }
+      },
+      "ManagerUserDto": {
+        "required": [
+          "phoneNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
